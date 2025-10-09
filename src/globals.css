@@ -1,0 +1,152 @@
+@import "tailwindcss";
+@import "@fontsource/poppins/400.css";
+@import "@fontsource/poppins/500.css";
+@import "@fontsource/poppins/600.css";
+@import "@fontsource/poppins/700.css";
+
+@font-face {
+  font-family: "DIN";
+  src: url("/fonts/DIN Next Rounded LT W04 Light.woff") format("woff");
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "DIN";
+  src: url("/fonts/DIN Next Rounded LT W04 Bold.woff") format("woff");
+  font-weight: 700;
+  font-style: normal;
+}
+
+@layer utilities {
+  .scrollbar-journeyBlack {
+    scrollbar-width: thin;
+    scrollbar-color: #0f0f0f transparent;
+  }
+
+  .scrollbar-blue::-webkit-scrollbar {
+    width: 4px;
+    height: 8px;
+  }
+
+  .scrollbar-blue::-webkit-scrollbar-thumb {
+    background-color: #0f0f0f;
+    border-radius: 4px;
+  }
+
+  .scrollbar-blue::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-none {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@theme {
+  --color-journeyGrayText: #52656d;
+
+  --color-journeyGrayButtonText: #53656d;
+
+  --color-journeyBackground: #fafafa;
+  --color-journeyBlack: #0f0f0f;
+  --color-journeyBlue: #4bb0f6;
+  --color-journeyGrayLocked: #37464f;
+  --color-journeyBlueShadow: #4099d6;
+  --color-journeyBlackShadow: #000000;
+  --color-journeyGrayBorder: #37464f;
+  --color-journeySubText: #e8e8e8;
+  --color-journeyDarkBlack: #000000;
+  --color-journeyGold: #ffd401;
+  --color-journeyLightGray: #adaeae;
+  --color-journeyGold: #fec700;
+  --color-journeyLightBlack: #333333;
+  --color-journeyPink: #f886d0;
+  --color-journeyOrange: #f5a632;
+  --color-journeyRed: #ff4c4b;
+  --color-journeyDarkGray: #202f36;
+  --color-journeyIncorrectRed: #ee5555;
+  --color-journeyDarkGrayAlt: #121f25;
+
+  --shadow-journeyLightBlackShadow: 0 8px #333333;
+
+  --font-din: DIN;
+  --shadow-journeyPinkShadow: #cc6ba7;
+
+  --shadow-journeyBlackShadow: 0 5px 0 #000000;
+  --shadow-journeyPinkShadow: 0 5px 0 #cc6ba7;
+  --shadow-journeyGrayLockedShadow: 0 8px 0 #2b383f;
+  --shadow-journeyGrayLockedCircleShadow: 0 5px 0 #2b383f;
+  --shadow-journeyBlackCircleShadow: 0 8px 0 #000000;
+  --shadow-journeyPinkCircleShadow: 0 8px #cc6ba7;
+  --shadow-journeyBlueShadow: 0 5px 0 #4099d6;
+  --shadow-journeyBlueCircleShadow: 0 8px #4099d6;
+  --shadow-journeyGrayBorderShadow: 0 3px #37464f;
+
+  --font-family-sans: 'Poppins', system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+@keyframes bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+.bob {
+  animation: bob 3s ease-in-out infinite;
+  will-change: transform;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-10px) rotate(1deg);
+  }
+  50% {
+    transform: translateY(-5px) rotate(-0.5deg);
+  }
+  75% {
+    transform: translateY(-12px) rotate(1.5deg);
+  }
+}
+
+.float-space {
+  animation: float 6s ease-in-out infinite;
+  will-change: transform;
+}
+
+:root {
+  --font-display: "Satoshi", "sans-serif";
+  --breakpoint-3xl: 1920px;
+  --color-avocado-100: oklch(0.99 0 0);
+  --color-avocado-200: oklch(0.98 0.04 113.22);
+  --color-avocado-300: oklch(0.94 0.11 115.03);
+  --color-avocado-400: oklch(0.92 0.19 114.08);
+  --color-avocado-500: oklch(0.84 0.18 117.33);
+  --color-avocado-600: oklch(0.53 0.12 118.34);
+  --ease-fluid: cubic-bezier(0.3, 0, 0, 1);
+  --ease-snappy: cubic-bezier(0.2, 0, 0, 1);
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  width: 100dvw;
+  background: #fafafa;
+  overscroll-behavior: contain;
+  font-family: 'Poppins', DIN, sans-serif;
+  font-weight: 400;
+}
