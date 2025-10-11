@@ -5,9 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:3000": "vite --port 3000",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "preview:3000": "vite preview --port 3000"
   },
   "dependencies": {
     "@fontsource/poppins": "^5.2.7",
@@ -16,6 +18,7 @@
     "@tanstack/react-form": "^1.23.6",
     "@tanstack/react-query": "^5.90.2",
     "@tanstack/react-router": "^1.132.47",
+    "@tanstack/router-plugin": "^1.132.51",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "framer-motion": "^12.23.22",
@@ -23,6 +26,7 @@
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-hook-form": "^7.64.0",
+    "reflect-metadata": "^0.2.2",
     "tailwind-merge": "^3.3.1",
     "zod": "^4.1.12",
     "zustand": "^5.0.8"
@@ -30,7 +34,7 @@
   "devDependencies": {
     "@eslint/js": "^9.36.0",
     "@tanstack/react-query-devtools": "^5.90.2",
-    "@tanstack/router-devtools": "^1.132.51",
+    "@tanstack/react-router-devtools": "^1.132.51",
     "@types/node": "^24.6.0",
     "@types/react": "^19.1.16",
     "@types/react-dom": "^19.1.9",
