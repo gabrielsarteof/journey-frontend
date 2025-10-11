@@ -1,15 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { LandingPage } from '../features/auth/presentation/pages'
 
 export const Route = createFileRoute('/')({
-  component: Home,
+  component: LandingPage,
 })
-
-function Home() {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-white">
-      <h1 className="text-6xl font-bold text-black font-sans">
-        DevCoach AI
-      </h1>
-    </div>
-  )
-}

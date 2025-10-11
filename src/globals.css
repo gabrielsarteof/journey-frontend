@@ -1,21 +1,20 @@
 @import "tailwindcss";
-@import "@fontsource/poppins/400.css";
-@import "@fontsource/poppins/500.css";
-@import "@fontsource/poppins/600.css";
-@import "@fontsource/poppins/700.css";
 
+/* DIN Next Rounded - Fonte principal do projeto */
 @font-face {
   font-family: "DIN";
-  src: url("/fonts/DIN Next Rounded LT W04 Light.woff") format("woff");
-  font-weight: 300;
+  src: url("/fonts/DIN Next Rounded LT W04 Regular.woff2") format("woff2");
+  font-weight: 400;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
   font-family: "DIN";
-  src: url("/fonts/DIN Next Rounded LT W04 Bold.woff") format("woff");
+  src: url("/fonts/DIN Next Rounded LT W04 Bold.woff2") format("woff2");
   font-weight: 700;
   font-style: normal;
+  font-display: swap;
 }
 
 @layer utilities {
@@ -75,7 +74,6 @@
 
   --shadow-journeyLightBlackShadow: 0 8px #333333;
 
-  --font-din: DIN;
   --shadow-journeyPinkShadow: #cc6ba7;
 
   --shadow-journeyBlackShadow: 0 5px 0 #000000;
@@ -88,7 +86,8 @@
   --shadow-journeyBlueCircleShadow: 0 8px #4099d6;
   --shadow-journeyGrayBorderShadow: 0 3px #37464f;
 
-  --font-family-sans: 'Poppins', system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-family-sans: DIN, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-family-din: DIN, sans-serif;
 }
 
 @keyframes bob {
@@ -147,6 +146,41 @@ body {
   width: 100dvw;
   background: #fafafa;
   overscroll-behavior: contain;
-  font-family: 'Poppins', DIN, sans-serif;
+  font-family: DIN, system-ui, -apple-system, sans-serif;
   font-weight: 400;
+}
+
+/* Remove outline azul padrão do browser em todos os elementos */
+*:focus,
+*:focus-visible {
+  outline: none;
+}
+
+/* Remove box-shadow azul do browser em inputs e buttons */
+button:focus,
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+/* Aplica peso bold em todos os botões */
+button {
+  font-weight: 700;
+}
+
+/* Reduz padding dos inputs */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="search"],
+input[type="tel"],
+input[type="url"],
+textarea {
+  padding-top: calc(0.75rem);
+  padding-bottom: calc(0.75rem);
+  padding-left: calc(0.75rem);
+  padding-right: calc(0.75rem);
 }

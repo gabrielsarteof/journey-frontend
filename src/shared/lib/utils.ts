@@ -29,19 +29,6 @@ export function generateId(): string {
   return Math.random().toString(36).substr(2, 9)
 }
 
-/**
- * Debounce function
- */
-export function debounce<T extends (...args: any[]) => any>(
-  func: T,
-  wait: number
-): (...args: Parameters<T>) => void {
-  let timeout: NodeJS.Timeout
-  return (...args: Parameters<T>) => {
-    clearTimeout(timeout)
-    timeout = setTimeout(() => func(...args), wait)
-  }
-}
 
 /**
  * Sleep function for async operations

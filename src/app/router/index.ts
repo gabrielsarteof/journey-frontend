@@ -1,5 +1,5 @@
 import { createRouter } from '@tanstack/react-router'
-import { routeTree } from './routeTree.gen'
+import { routeTree } from '../../routeTree.gen'
 
 // Create the router instance
 export const router = createRouter({
