@@ -9,6 +9,7 @@ import type { RegisterDTO } from '../../domain/schemas/AuthSchemas'
 import { usePerformanceOptimization } from '../../../../shared/performance/presentation/hooks/usePerformanceOptimization'
 import { PerformanceConfig } from '../../../../shared/performance/domain/value-objects/PerformanceConfig'
 import { PerformanceStrategy } from '../../../../shared/performance/domain/entities/PerformanceStrategy'
+import { useDocumentTitle } from '../../../../shared/hooks/useDocumentTitle'
 
 interface RegisterFormData extends RegisterDTO {
   confirmPassword: string
@@ -167,6 +168,10 @@ const PasswordInput = ({ value, onChange, onBlur, hasError = false }: {
 export function RegisterPage() {
   const navigate = useNavigate()
   const { register, isLoading, error } = useAuth()
+
+  // Define o título da página como "Cadastro | Journey"
+  useDocumentTitle('Cadastro')
+
   const [formData, setFormData] = useState<RegisterFormData>({
     name: '',
     email: '',

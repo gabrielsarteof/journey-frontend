@@ -6,10 +6,14 @@ import { FormErrorMessage } from '../../../../shared/components/ui/FormErrorMess
 import { useAuth } from '../../application/hooks/useAuth'
 import { LoginSchema } from '../../domain/schemas/AuthSchemas'
 import type { LoginDTO } from '../../domain/schemas/AuthSchemas'
+import { useDocumentTitle } from '../../../../shared/hooks/useDocumentTitle'
 
 export function LoginPage() {
   const navigate = useNavigate()
   const { login, isLoading, error } = useAuth()
+
+  // Define o título da página como "Login | Journey"
+  useDocumentTitle('Login')
   const [formData, setFormData] = useState<LoginDTO>({
     email: '',
     password: ''
