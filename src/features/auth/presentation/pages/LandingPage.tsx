@@ -2,9 +2,18 @@ import { useNavigate } from '@tanstack/react-router'
 import { useCallback } from 'react'
 import { Button } from '../../../../shared/components/ui/Button'
 import { useWindowEvents } from '../../../../shared/performance/presentation/hooks/useWindowEvents'
+import { useDocumentTitle } from '../../../../shared/hooks/useDocumentTitle'
+import JourneyLogo from '../../../../shared/assets/brand/journey-logo.svg?react'
 
-export function LandingPage() {
+interface LandingPageProps {
+  heroImage?: string
+}
+
+export function LandingPage({ heroImage }: LandingPageProps) {
   const navigate = useNavigate()
+
+  // Define o título da página como apenas "Journey"
+  useDocumentTitle()
 
   // Performance optimization para resize events
   const handleResize = useCallback(() => {
@@ -30,26 +39,33 @@ export function LandingPage() {
   return (
     <div className="min-h-screen h-full bg-white flex items-center justify-center px-4">
       <div className="container mx-auto py-12 px-4">
-        <div className="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
-          {/* Coluna Esquerda - Hero Image */}
-          <div className="flex justify-center items-center lg:justify-end">
-            {/* Container com aspect ratio definido */}
-            <div className="relative w-full max-w-[240px] sm:max-w-[320px] lg:max-w-[400px] xl:max-w-[480px] aspect-square flex items-center justify-center">
-              {/* Placeholder para hero image */}
-              <div className="absolute w-full h-full bg-gradient-to-br from-blue-400 to-purple-600 rounded-full flex items-center justify-center">
-                <span className="text-6xl">🚀</span>
+        <div
+          className={`w-full max-w-7xl mx-auto grid grid-cols-1 gap-8 lg:gap-16 items-center ${
+            heroImage ? 'lg:grid-cols-2' : 'lg:grid-cols-1'
+          }`}
+        >
+          {/* Coluna Esquerda - Hero Image (Condicional) */}
+          {heroImage && (
+            <div className="flex justify-center items-center lg:justify-end">
+              <div className="relative w-full max-w-[240px] sm:max-w-[320px] lg:max-w-[400px] xl:max-w-[480px] aspect-square flex items-center justify-center">
+                <img
+                  src={heroImage}
+                  alt="Journey Hero"
+                  className="w-full h-full object-cover rounded-2xl"
+                />
               </div>
             </div>
-          </div>
+          )}
 
           {/* Coluna Direita - Conteúdo */}
-          <div className="flex flex-col gap-6 items-center lg:items-start">
+          <div className={`flex flex-col gap-6 ${heroImage ? 'items-center lg:items-start' : 'items-center'}`}>
             <div className="flex flex-col items-center justify-center text-center">
               <div className="flex items-center gap-4 mb-4">
-                <div className="w-16 h-16 lg:w-20 lg:h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                  <span className="text-2xl lg:text-3xl">🎯</span>
-                </div>
-                <h1 className="text-4xl lg:text-4xl font-bold text-gray-900" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                <JourneyLogo className="w-16 h-16 lg:w-20 lg:h-20" />
+                <h1
+                  className="text-4xl lg:text-5xl font-bold text-gray-900"
+                  style={{ fontFamily: 'Poppins, sans-serif' }}
+                >
                   Journey
                 </h1>
               </div>
