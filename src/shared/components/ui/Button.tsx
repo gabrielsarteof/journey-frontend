@@ -72,31 +72,33 @@ export function Button({
     stableOnClick,
     optimizationOptions
   )
-  // Base classes - sempre aplicadas
-  const baseClasses = 'w-full rounded-2xl font-medium transition-all duration-200 flex items-center justify-center gap-2 focus:outline-none focus-visible:outline-none';
 
-  // Variant classes
+  // Classes base do botão
+  const baseClasses = 'w-full rounded-2xl font-medium flex items-center justify-center gap-2 focus:outline-none focus-visible:outline-none';
+
+  // Classes de variantes (cores e estilos básicos)
   const variantClasses = {
-    primary: 'bg-journeyBlack text-white shadow-journeyBlackShadow hover:bg-gray-800 active:translate-y-[2px] active:shadow-none',
-    secondary: 'bg-white border-2 border-gray-300 text-gray-900 hover:bg-gray-50 active:translate-y-[2px] shadow-md active:shadow-sm',
-    ghost: 'bg-transparent text-gray-700 hover:bg-gray-100 active:bg-gray-200',
-    danger: 'bg-journeyRed text-white hover:bg-red-700 active:translate-y-[2px] shadow-red-200 active:shadow-none'
+    primary: 'bg-primary text-white hover:bg-primary-hover',
+    secondary: 'bg-white border-2 text-primary',
+    ghost: 'bg-transparent text-text-secondary hover:bg-surface-elevated active:bg-surface',
+    danger: 'bg-error text-white hover:bg-error-alt'
   };
 
-  // Size classes
+  // Classes de tamanho
   const sizeClasses = {
     sm: 'px-4 py-2 text-sm h-10',
     md: 'px-6 py-3 text-base h-12',
     lg: 'px-8 py-4 text-lg h-14'
   };
 
-  // State classes
+  // Classes de estado (disabled/loading)
   const stateClasses = (disabled || loading)
-    ? 'opacity-50 cursor-not-allowed transform-none shadow-none hover:bg-current active:translate-y-0'
+    ? 'opacity-50 cursor-not-allowed'
     : '';
 
   const loadingClasses = loading ? 'cursor-wait' : '';
 
+  // Combina todas as classes
   const buttonClasses = [
     baseClasses,
     variantClasses[variant],
@@ -117,12 +119,69 @@ export function Button({
     }
   };
 
+  // Controla o estado de clique para animação 3D
+  const [isActive, setIsActive] = React.useState(false);
+
+  // Estilos inline para shadow 3D e animações
+  const getButtonStyle = (): React.CSSProperties => {
+    const baseStyle: React.CSSProperties = {
+      transition: 'all 0.2s ease',
+      transform: isActive ? 'translateY(5px)' : 'translateY(0)',
+    };
+
+    if (disabled || loading) {
+      return {
+        ...baseStyle,
+        boxShadow: 'none',
+        transform: 'none'
+      };
+    }
+
+    switch (variant) {
+      case 'primary':
+        return {
+          ...baseStyle,
+          boxShadow: isActive ? 'none' : '0 5px 0 #000000'
+        };
+
+      case 'secondary':
+        return {
+          ...baseStyle,
+          borderColor: '#dddddd',
+          boxShadow: isActive ? 'none' : '0 5px 0 #dddddd'
+        };
+
+      case 'danger':
+        return {
+          ...baseStyle,
+          boxShadow: isActive ? 'none' : '0 5px 0 #000000'
+        };
+
+      default:
+        return baseStyle;
+    }
+  };
+
   return (
     <button
       type={type}
       onClick={handleClick}
       disabled={disabled || loading}
       className={buttonClasses}
+      style={getButtonStyle()}
+      onMouseDown={() => setIsActive(true)}
+      onMouseUp={() => setIsActive(false)}
+      onMouseLeave={() => setIsActive(false)}
+      onMouseEnter={(e) => {
+        if (variant === 'secondary' && !disabled && !loading) {
+          e.currentTarget.style.backgroundColor = '#f9f9f9';
+        }
+      }}
+      onMouseOut={(e) => {
+        if (variant === 'secondary' && !disabled && !loading) {
+          e.currentTarget.style.backgroundColor = 'white';
+        }
+      }}
     >
       {loading && <LoadingSpinner />}
       {icon && !loading && icon}

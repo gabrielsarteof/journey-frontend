@@ -20,7 +20,7 @@
 @layer utilities {
   .scrollbar-journeyBlack {
     scrollbar-width: thin;
-    scrollbar-color: #0f0f0f transparent;
+    scrollbar-color: var(--color-journeyBlack) transparent;
   }
 
   .scrollbar-blue::-webkit-scrollbar {
@@ -29,7 +29,7 @@
   }
 
   .scrollbar-blue::-webkit-scrollbar-thumb {
-    background-color: #0f0f0f;
+    background-color: var(--color-journeyBlack);
     border-radius: 4px;
   }
 
@@ -45,49 +45,174 @@
   .scrollbar-none::-webkit-scrollbar {
     display: none;
   }
+
+  /* Shadows de botões - seguindo o padrão do shadow-md */
+  .shadow-button-primary {
+    box-shadow: var(--shadow-button-primary) !important;
+  }
+
+  .shadow-button-secondary {
+    box-shadow: var(--shadow-button-secondary) !important;
+  }
 }
 
 @theme {
-  --color-journeyGrayText: #52656d;
+  /* Background/Superfície */
+  --color-background: #fafafa;
+  --color-surface: #ffffff;
+  --color-surface-elevated: #f5f5f5;
+  --color-surface-hover: #f9f9f9;
+  --color-surface-dark: #202f36;
+  --color-surface-darker: #121f25;
 
-  --color-journeyGrayButtonText: #53656d;
+  /* Texto */
+  --color-text-primary: #0f0f0f;
+  --color-text-secondary: #52656d;
+  --color-text-muted: #adaeae;
+  --color-text-inverse: #ffffff;
+  --color-text-button: #53656d;
+  --color-text-subtle: #e8e8e8;
 
-  --color-journeyBackground: #fafafa;
-  --color-journeyBlack: #0f0f0f;
-  --color-journeyBlue: #4bb0f6;
-  --color-journeyGrayLocked: #37464f;
-  --color-journeyBlueShadow: #4099d6;
-  --color-journeyBlackShadow: #000000;
-  --color-journeyGrayBorder: #37464f;
-  --color-journeySubText: #e8e8e8;
-  --color-journeyDarkBlack: #000000;
-  --color-journeyGold: #ffd401;
-  --color-journeyLightGray: #adaeae;
-  --color-journeyGold: #fec700;
-  --color-journeyLightBlack: #333333;
-  --color-journeyPink: #f886d0;
-  --color-journeyOrange: #f5a632;
-  --color-journeyRed: #ff4c4b;
-  --color-journeyDarkGray: #202f36;
-  --color-journeyIncorrectRed: #ee5555;
-  --color-journeyDarkGrayAlt: #121f25;
+  /* Bordas */
+  --color-border: #37464f;
+  --color-border-muted: #e5e7eb;
+  --color-border-light: #dddddd;
+  --color-border-strong: #2b383f;
 
-  --shadow-journeyLightBlackShadow: 0 8px #333333;
+  /* Cores adicionais para Tailwind */
+  --color-border-secondary: #dddddd;
 
-  --shadow-journeyPinkShadow: #cc6ba7;
+  /* Brand/Primárias - cor principal do projeto é #0f0f0f (preto) */
+  --color-primary: #0f0f0f;
+  --color-primary-hover: #333333;
+  --color-primary-active: #1a1a1a;
+  --color-secondary: #4bb0f6;
+  --color-secondary-hover: #3a9fd8;
+  --color-secondary-active: #4099d6;
 
-  --shadow-journeyBlackShadow: 0 5px 0 #000000;
-  --shadow-journeyPinkShadow: 0 5px 0 #cc6ba7;
-  --shadow-journeyGrayLockedShadow: 0 8px 0 #2b383f;
-  --shadow-journeyGrayLockedCircleShadow: 0 5px 0 #2b383f;
-  --shadow-journeyBlackCircleShadow: 0 8px 0 #000000;
-  --shadow-journeyPinkCircleShadow: 0 8px #cc6ba7;
-  --shadow-journeyBlueShadow: 0 5px 0 #4099d6;
-  --shadow-journeyBlueCircleShadow: 0 8px #4099d6;
-  --shadow-journeyGrayBorderShadow: 0 3px #37464f;
+  /* Estados */
+  --color-success: #0f0f0f;
+  --color-success-shadow: #000000;
+  --color-error: #ff4c4b;
+  --color-error-alt: #ee5555;
+  --color-warning: #f5a632;
+  --color-info: #4bb0f6;
 
+  /* Cores de destaque */
+  --color-gold: #ffd401;
+  --color-pink: #f886d0;
+  --color-pink-dark: #cc6ba7;
+  --color-orange: #f5a632;
+  --color-red: #ff4c4b;
+
+  /* Bloqueado/Desabilitado */
+  --color-locked: #37464f;
+  --color-disabled: #adaeae;
+
+  /* Sombras - Padrão: --shadow-{component}-{variant} */
+
+  /* Sombras genéricas */
+  --shadow-sm: 0 3px #37464f;
+  --shadow-md: 0 5px 0 #000000;
+  --shadow-lg: 0 8px #333333;
+
+  /* Sombras de botões */
+  --shadow-button-primary: 0 5px 0 #000000;
+  --shadow-button-secondary: 0 5px 0 #dddddd;
+  --shadow-button-secondary-sm: 0 3px 0 #dddddd;
+
+  /* Sombras de círculos/badges */
+  --shadow-circle-sm: 0 5px 0 #2b383f;
+  --shadow-circle-md: 0 8px 0 #000000;
+  --shadow-circle-primary: 0 8px #4099d6;
+  --shadow-circle-pink: 0 8px #cc6ba7;
+  --shadow-circle-locked: 0 5px 0 #2b383f;
+
+  /* Sombras de badges (retangulares) */
+  --shadow-badge-primary: 0 5px 0 #4099d6;
+  --shadow-badge-pink: 0 5px 0 #cc6ba7;
+  --shadow-badge-locked: 0 8px 0 #2b383f;
+
+  /* Tipografia */
   --font-family-sans: DIN, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-family-din: DIN, sans-serif;
+}
+
+/* Dark mode via classe .dark no <html> */
+.dark {
+  @theme {
+    /* Background/Superfície */
+    --color-background: #141f24;
+    --color-surface: #202f36;
+    --color-surface-elevated: #2b383f;
+    --color-surface-dark: #0f1419;
+    --color-surface-darker: #121f25;
+
+    /* Texto */
+    --color-text-primary: #fafafa;
+    --color-text-secondary: #adaeae;
+    --color-text-muted: #52656d;
+    --color-text-inverse: #0f0f0f;
+    --color-text-button: #adaeae;
+    --color-text-subtle: #d0f0c1;
+
+    /* Bordas */
+    --color-border: #37464f;
+    --color-border-muted: #2b383f;
+    --color-border-light: #4a5a64;
+    --color-border-strong: #4a5a64;
+
+    /* Brand/Primárias - cor principal do projeto é #0f0f0f (preto) */
+    --color-primary: #0f0f0f;
+    --color-primary-hover: #333333;
+    --color-primary-active: #1a1a1a;
+    --color-secondary: #4bb0f6;
+    --color-secondary-hover: #5dc0ff;
+    --color-secondary-active: #4099d6;
+
+    /* Estados */
+    --color-success: #0f0f0f;
+    --color-success-shadow: #000000;
+    --color-error: #ee5555;
+    --color-error-alt: #ff6b6b;
+    --color-warning: #f5a632;
+    --color-info: #4bb0f6;
+
+    /* Cores de destaque */
+    --color-gold: #ffd401;
+    --color-pink: #f886d0;
+    --color-pink-dark: #cc6ba7;
+    --color-orange: #f5a632;
+    --color-red: #ff4c4b;
+
+    /* Bloqueado/Desabilitado */
+    --color-locked: #37464f;
+    --color-disabled: #52656d;
+
+    /* Sombras - ajustadas para contraste em dark mode */
+
+    /* Sombras genéricas */
+    --shadow-sm: 0 3px #1a2730;
+    --shadow-md: 0 5px 0 #000000;
+    --shadow-lg: 0 8px #0a0a0a;
+
+    /* Sombras de botões */
+    --shadow-button-primary: 0 5px 0 #000000;
+    --shadow-button-secondary: 0 5px 0 #4a5a64;
+    --shadow-button-secondary-sm: 0 3px 0 #4a5a64;
+
+    /* Sombras de círculos/badges */
+    --shadow-circle-sm: 0 5px 0 #1a2730;
+    --shadow-circle-md: 0 8px 0 #000000;
+    --shadow-circle-primary: 0 8px #357ab8;
+    --shadow-circle-pink: 0 8px #a5548a;
+    --shadow-circle-locked: 0 5px 0 #1a2730;
+
+    /* Sombras de badges (retangulares) */
+    --shadow-badge-primary: 0 5px 0 #357ab8;
+    --shadow-badge-pink: 0 5px 0 #a5548a;
+    --shadow-badge-locked: 0 8px 0 #1a2730;
+  }
 }
 
 @keyframes bob {
@@ -157,7 +282,7 @@ body {
 }
 
 /* Remove box-shadow azul do browser em inputs e buttons */
-button:focus,
+button:focus:not([class*="shadow-"]),
 input:focus,
 textarea:focus,
 select:focus {
