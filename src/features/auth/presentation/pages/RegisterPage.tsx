@@ -64,12 +64,13 @@ const PasswordInput = ({ value, onChange, onBlur, hasError = false }: {
 
   const inputType = showPassword ? 'text' : 'password'
   const baseClasses = `
-    w-full bg-gray-100 border-2 rounded-2xl px-4 py-3 sm:px-5 sm:py-4 pr-12
+    w-full bg-input border-2 border-input rounded-2xl px-4 py-3 sm:px-5 sm:py-4 pr-12
     text-sm sm:text-base
-    focus:outline-none transition-all duration-200
+    focus:outline-none focus:border-input-focus transition-all duration-200
+    text-input placeholder-input
     ${hasError
       ? 'border-journeyIncorrectRed focus:border-journeyIncorrectRed text-journeyIncorrectRed placeholder-journeyIncorrectRed'
-      : 'border-gray-300 focus:border-black text-gray-600 placeholder-gray-500'}
+      : ''}
   `
 
   return (
@@ -318,7 +319,7 @@ export function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white p-4 relative">
+    <div className="min-h-screen flex items-center justify-center bg-background p-4 relative">
       {/* Close Button */}
       <button
         onClick={handleClose}
@@ -334,7 +335,7 @@ export function RegisterPage() {
       <div className="w-full max-w-sm mx-auto">
         {/* Header */}
         <header className="mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 text-center leading-tight">
+          <h1 className="text-2xl sm:text-3xl font-bold text-auth-heading text-center leading-tight transition-colors">
             Crie sua conta
           </h1>
         </header>
@@ -383,13 +384,13 @@ export function RegisterPage() {
               onChange={handleInputChange('acceptTerms')}
               className="mt-0.5 h-4 w-4 text-blue-500 focus:ring-blue-500 border-gray-300 rounded flex-shrink-0"
             />
-            <label htmlFor="acceptTerms" className="text-xs text-gray-600 leading-relaxed">
+            <label htmlFor="acceptTerms" className="text-sm text-gray-600 leading-relaxed">
               Eu aceito os{' '}
-              <a href="/terms" target="_blank" className="text-blue-500 hover:underline">
+              <a href="/terms" target="_blank" className="text-link hover:underline transition-colors">
                 Termos de Uso
               </a>{' '}
               e a{' '}
-              <a href="/privacy" target="_blank" className="text-blue-500 hover:underline">
+              <a href="/privacy" target="_blank" className="text-link hover:underline transition-colors">
                 Política de Privacidade
               </a>
               <span className="text-red-500 ml-1">*</span>
@@ -420,9 +421,9 @@ export function RegisterPage() {
 
         {/* Divider */}
         <div className="flex items-center gap-3 my-6">
-          <div className="flex-1 h-px bg-gray-300"></div>
-          <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">OU</span>
-          <div className="flex-1 h-px bg-gray-300"></div>
+          <div className="flex-1 h-px bg-divider transition-colors"></div>
+          <span className="text-sm font-medium text-divider uppercase tracking-wide transition-colors">OU</span>
+          <div className="flex-1 h-px bg-divider transition-colors"></div>
         </div>
 
         {/* Login Button */}
@@ -438,7 +439,7 @@ export function RegisterPage() {
 
         {/* Terms Footer */}
         <footer className="text-center">
-          <p className="text-xs text-gray-500 leading-relaxed">
+          <p className="text-sm text-gray-500 leading-relaxed">
             Ao se cadastrar no Journey, você concorda com nossos Termos e Política de Privacidade.
           </p>
         </footer>

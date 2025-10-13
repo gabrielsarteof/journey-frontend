@@ -70,12 +70,13 @@ export function Input({
   }
 
   const baseClasses = `
-    w-full bg-gray-100 border-2 rounded-2xl px-4 py-3 sm:px-5 sm:py-4
+    w-full bg-input border-2 border-input rounded-2xl px-4 py-3 sm:px-5 sm:py-4
     text-sm sm:text-base
-    focus:outline-none transition-all duration-200
+    focus:outline-none focus:border-input-focus transition-all duration-200
+    text-input placeholder-input
     ${hasError
       ? 'border-journeyIncorrectRed focus:border-journeyIncorrectRed text-journeyIncorrectRed placeholder-journeyIncorrectRed'
-      : 'border-gray-300 focus:border-black text-gray-600 placeholder-gray-500'}
+      : ''}
   `
 
   return (
@@ -116,7 +117,7 @@ export function Input({
           <button
             type="button"
             onClick={onForgotPassword}
-            className="text-sm text-blue-500 hover:underline"
+            className="text-sm text-link hover:underline uppercase transition-colors"
           >
             Esqueceu a senha?
           </button>

@@ -77,7 +77,7 @@ export function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white p-4 relative">
+    <div className="min-h-screen flex items-center justify-center bg-background p-4 relative">
       {/* Close Button */}
       <button
         onClick={handleClose}
@@ -93,7 +93,7 @@ export function LoginPage() {
       <div className="w-full max-w-sm mx-auto">
         {/* Header */}
         <header className="mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 text-center leading-tight">
+          <h1 className="text-2xl sm:text-3xl font-bold text-auth-heading text-center leading-tight transition-colors">
             Continue de onde você parou
           </h1>
         </header>
@@ -136,9 +136,9 @@ export function LoginPage() {
 
         {/* Divider */}
         <div className="flex items-center gap-3 my-6">
-          <div className="flex-1 h-px bg-gray-300"></div>
-          <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">OU</span>
-          <div className="flex-1 h-px bg-gray-300"></div>
+          <div className="flex-1 h-px bg-divider transition-colors"></div>
+          <span className="text-sm font-medium text-divider uppercase tracking-wide transition-colors">OU</span>
+          <div className="flex-1 h-px bg-divider transition-colors"></div>
         </div>
 
         {/* Register Button */}
@@ -154,7 +154,7 @@ export function LoginPage() {
 
         {/* Terms Footer */}
         <footer className="text-center">
-          <p className="text-xs text-gray-500 leading-relaxed">
+          <p className="text-sm text-gray-500 leading-relaxed">
             Ao entrar no Journey, você concorda com nossos Termos e Política de Privacidade.
           </p>
         </footer>
