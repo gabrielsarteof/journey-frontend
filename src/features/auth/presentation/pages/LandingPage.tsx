@@ -3,7 +3,7 @@ import { useCallback } from 'react'
 import { Button } from '../../../../shared/components/ui/Button'
 import { useWindowEvents } from '../../../../shared/performance/presentation/hooks/useWindowEvents'
 import { useDocumentTitle } from '../../../../shared/hooks/useDocumentTitle'
-import JourneyLogo from '../../../../shared/assets/brand/journey-logo.svg?react'
+import { ThemedImage } from '../../../../shared/components/ui/ThemedImage'
 
 interface LandingPageProps {
   heroImage?: string
@@ -37,7 +37,7 @@ export function LandingPage({ heroImage }: LandingPageProps) {
   }
 
   return (
-    <div className="min-h-screen h-full bg-white flex items-center justify-center px-4">
+    <div className="min-h-screen h-full bg-background transition-colors flex items-center justify-center px-4">
       <div className="container mx-auto py-12 px-4">
         <div
           className={`w-full max-w-7xl mx-auto grid grid-cols-1 gap-8 lg:gap-16 items-center ${
@@ -61,15 +61,22 @@ export function LandingPage({ heroImage }: LandingPageProps) {
           <div className={`flex flex-col gap-6 ${heroImage ? 'items-center lg:items-start' : 'items-center'}`}>
             <div className="flex flex-col items-center justify-center text-center">
               <div className="flex items-center gap-4 mb-4">
-                <JourneyLogo className="w-16 h-16 lg:w-20 lg:h-20" />
-                <h1
-                  className="text-4xl lg:text-5xl font-bold text-gray-900"
-                  style={{ fontFamily: 'Poppins, sans-serif' }}
-                >
-                  Journey
-                </h1>
+                <ThemedImage
+                  lightSrc="/brand/journey-logo-light.svg"
+                  darkSrc="/brand/journey-logo-dark.svg"
+                  alt="Journey Logo"
+                  className="w-18 h-18 lg:w-22 lg:h-22"
+                  priority={true}
+                />
+                <ThemedImage
+                  lightSrc="/brand/journey-text-light.svg"
+                  darkSrc="/brand/journey-text-dark.svg"
+                  alt="Journey"
+                  className="h-15 lg:h-20"
+                  priority={true}
+                />
               </div>
-              <p className="text-center font-light py-2 text-xl lg:text-2xl max-w-md text-gray-700">
+              <p className="text-center font-light py-2 text-xl lg:text-2xl max-w-md text-text-secondary transition-colors">
                 O jeito ético, seguro e eficaz de aprender com IA
               </p>
             </div>
@@ -85,17 +92,15 @@ export function LandingPage({ heroImage }: LandingPageProps) {
                 COMECE AGORA
               </Button>
 
-              <div style={{ boxShadow: '0 5px 0 #d1d5db' }} className="rounded-2xl">
-                <Button
-                  onClick={handleAlreadyHaveAccount}
-                  variant="secondary"
-                  size="lg"
-                  enableThrottle={true}
-                  throttleDelay={1000}
-                >
-                  JÁ TENHO UMA CONTA
-                </Button>
-              </div>
+              <Button
+                onClick={handleAlreadyHaveAccount}
+                variant="secondary"
+                size="lg"
+                enableThrottle={true}
+                throttleDelay={1000}
+              >
+                JÁ TENHO UMA CONTA
+              </Button>
             </div>
           </div>
         </div>
