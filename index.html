@@ -4,6 +4,32 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/brand/journey-favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Blocking script: previne FOUC (Flash of Unstyled Content) ao aplicar tema antes do primeiro paint -->
+    <script>
+      (function() {
+        const STORAGE_KEY = 'journey-theme';
+
+        function getTheme() {
+          try {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            if (stored === 'light' || stored === 'dark') return stored;
+            if (stored === 'system' || !stored) {
+              return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            return 'light';
+          } catch (e) {
+            return 'light';
+          }
+        }
+
+        const theme = getTheme();
+        document.documentElement.setAttribute('data-theme', theme);
+        // color-scheme hint para o browser ajustar scrollbars e form controls nativos
+        document.documentElement.style.colorScheme = theme;
+      })();
+    </script>
+
     <title>Journey</title>
   </head>
   <body>

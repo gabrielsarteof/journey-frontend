@@ -1,3 +1,5 @@
+/* Tailwind v4: @custom-variant permite customizar o comportamento do variant 'dark:' */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 @import "tailwindcss";
 
 /* DIN Next Rounded - Fonte principal do projeto */
@@ -56,30 +58,58 @@
   }
 }
 
+/* CSS @property: permite transições suaves e type-safety para custom properties */
+@property --color-background {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #fafafa;
+}
+
+@property --color-surface {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #ffffff;
+}
+
+@property --color-text-primary {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #0f0f0f;
+}
+
+/* Define as cores base no :root para serem referenciadas */
+:root {
+  --base-background: #fafafa;
+  --base-surface: #ffffff;
+  --base-surface-elevated: #f5f5f5;
+  --base-surface-hover: #f9f9f9;
+  --base-text-primary: #0f0f0f;
+  --base-text-secondary: #52656d;
+  --base-border-light: #dddddd;
+}
+
+/* Theme variables referenciando as cores base */
+@theme inline {
+  --color-background: var(--base-background);
+  --color-surface: var(--base-surface);
+  --color-surface-elevated: var(--base-surface-elevated);
+  --color-surface-hover: var(--base-surface-hover);
+  --color-text-primary: var(--base-text-primary);
+  --color-text-secondary: var(--base-text-secondary);
+  --color-border-light: var(--base-border-light);
+}
+
 @theme {
-  /* Background/Superfície */
-  --color-background: #fafafa;
-  --color-surface: #ffffff;
-  --color-surface-elevated: #f5f5f5;
-  --color-surface-hover: #f9f9f9;
+  /* Cores que não mudam com o tema */
   --color-surface-dark: #202f36;
   --color-surface-darker: #121f25;
-
-  /* Texto */
-  --color-text-primary: #0f0f0f;
-  --color-text-secondary: #52656d;
   --color-text-muted: #adaeae;
   --color-text-inverse: #ffffff;
   --color-text-button: #53656d;
   --color-text-subtle: #e8e8e8;
-
-  /* Bordas */
   --color-border: #37464f;
   --color-border-muted: #e5e7eb;
-  --color-border-light: #dddddd;
   --color-border-strong: #2b383f;
-
-  /* Cores adicionais para Tailwind */
   --color-border-secondary: #dddddd;
 
   /* Brand/Primárias - cor principal do projeto é #0f0f0f (preto) */
@@ -138,31 +168,30 @@
   --font-family-din: DIN, sans-serif;
 }
 
-/* Dark mode via classe .dark no <html> */
-.dark {
+/* Dark mode: atualiza as variáveis base no :root */
+[data-theme="dark"] {
+  --base-background: #141f24;
+  --base-surface: #202f36;
+  --base-surface-elevated: #2b383f;
+  --base-surface-hover: #2b383f;
+  --base-text-primary: #fafafa;
+  --base-text-secondary: #adaeae;
+  --base-border-light: #4a5a64;
+}
+
+[data-theme="dark"] {
   @theme {
-    /* Background/Superfície */
-    --color-background: #141f24;
-    --color-surface: #202f36;
-    --color-surface-elevated: #2b383f;
     --color-surface-dark: #0f1419;
     --color-surface-darker: #121f25;
-
-    /* Texto */
-    --color-text-primary: #fafafa;
-    --color-text-secondary: #adaeae;
     --color-text-muted: #52656d;
     --color-text-inverse: #0f0f0f;
     --color-text-button: #adaeae;
     --color-text-subtle: #d0f0c1;
-
-    /* Bordas */
     --color-border: #37464f;
     --color-border-muted: #2b383f;
-    --color-border-light: #4a5a64;
     --color-border-strong: #4a5a64;
 
-    /* Brand/Primárias - cor principal do projeto é #0f0f0f (preto) */
+    /* Brand/Primárias */
     --color-primary: #0f0f0f;
     --color-primary-hover: #333333;
     --color-primary-active: #1a1a1a;
@@ -189,26 +218,21 @@
     --color-locked: #37464f;
     --color-disabled: #52656d;
 
-    /* Sombras - ajustadas para contraste em dark mode */
-
-    /* Sombras genéricas */
+    /* Sombras ajustadas para contraste em dark mode */
     --shadow-sm: 0 3px #1a2730;
     --shadow-md: 0 5px 0 #000000;
     --shadow-lg: 0 8px #0a0a0a;
 
-    /* Sombras de botões */
     --shadow-button-primary: 0 5px 0 #000000;
     --shadow-button-secondary: 0 5px 0 #4a5a64;
     --shadow-button-secondary-sm: 0 3px 0 #4a5a64;
 
-    /* Sombras de círculos/badges */
     --shadow-circle-sm: 0 5px 0 #1a2730;
     --shadow-circle-md: 0 8px 0 #000000;
     --shadow-circle-primary: 0 8px #357ab8;
     --shadow-circle-pink: 0 8px #a5548a;
     --shadow-circle-locked: 0 5px 0 #1a2730;
 
-    /* Sombras de badges (retangulares) */
     --shadow-badge-primary: 0 5px 0 #357ab8;
     --shadow-badge-pink: 0 5px 0 #a5548a;
     --shadow-badge-locked: 0 8px 0 #1a2730;
@@ -262,6 +286,12 @@
   --ease-snappy: cubic-bezier(0.2, 0, 0, 1);
 }
 
+html {
+  /* Transição suave entre temas usando @property para animação de custom properties */
+  transition: background-color 0.2s cubic-bezier(0.2, 0, 0, 1),
+              color 0.2s cubic-bezier(0.2, 0, 0, 1);
+}
+
 html,
 body {
   margin: 0;
@@ -269,10 +299,23 @@ body {
   overflow-x: hidden;
   overflow-y: hidden;
   width: 100dvw;
-  background: #fafafa;
+  background: var(--color-background);
   overscroll-behavior: contain;
   font-family: DIN, system-ui, -apple-system, sans-serif;
   font-weight: 400;
+}
+
+/* Screen reader only: oculta visualmente mas mantém acessível para leitores de tela */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }
 
 /* Remove outline azul padrão do browser em todos os elementos */

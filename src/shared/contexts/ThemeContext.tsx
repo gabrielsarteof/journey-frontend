@@ -51,9 +51,10 @@ export function ThemeProvider({
   const handleSetTheme = useCallback((theme: ThemeMode) => {
     const newTheme = Theme.resolve(theme)
 
-    // Aplica mudança imediatamente na DOM para evitar flash
-    document.documentElement.classList.remove('light', 'dark')
-    document.documentElement.classList.add(newTheme.resolved)
+    // Usa data-attribute ao invés de classes (Tailwind v4 best practice)
+    document.documentElement.setAttribute('data-theme', newTheme.resolved)
+    // color-scheme: hint CSS para browser renderizar scrollbars/forms nativos no tema correto
+    document.documentElement.style.colorScheme = newTheme.resolved
 
     setCurrentTheme(newTheme)
     storageStrategy.set(theme)
@@ -64,10 +65,25 @@ export function ThemeProvider({
     handleSetTheme(nextTheme)
   }, [currentTheme.resolved, handleSetTheme])
 
-  // Sincroniza DOM na inicialização
+  // Sincroniza DOM e anuncia mudanças para screen readers (a11y)
   useEffect(() => {
-    document.documentElement.classList.remove('light', 'dark')
-    document.documentElement.classList.add(currentTheme.resolved)
+    document.documentElement.setAttribute('data-theme', currentTheme.resolved)
+    document.documentElement.style.colorScheme = currentTheme.resolved
+
+    // Anuncia mudança de tema para screen readers via live region
+    const announcement = document.createElement('div')
+    announcement.setAttribute('role', 'status')
+    announcement.setAttribute('aria-live', 'polite')
+    announcement.setAttribute('aria-atomic', 'true')
+    announcement.className = 'sr-only'
+    announcement.textContent = `Tema alterado para modo ${currentTheme.resolved === 'dark' ? 'escuro' : 'claro'}`
+    document.body.appendChild(announcement)
+
+    const timeoutId = setTimeout(() => announcement.remove(), 1000)
+    return () => {
+      clearTimeout(timeoutId)
+      announcement.remove()
+    }
   }, [currentTheme.resolved])
 
   const contextValue: ThemeContextValue = {

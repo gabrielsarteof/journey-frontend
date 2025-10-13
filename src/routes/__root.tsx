@@ -6,26 +6,24 @@ import { ThemeToggle } from '../shared/components/ui/ThemeToggle'
 export const Route = createRootRoute({
   component: () => (
     <>
-      <div className="min-h-screen bg-journeyBackground dark:bg-journeyDarkBlack transition-colors">
-        {/* Header com navegação e theme toggle */}
-        <header className="p-4 border-b border-gray-200 dark:border-gray-700">
+      <div className="min-h-screen bg-background transition-colors">
+        <header className="p-4 border-b border-border-light bg-surface transition-colors">
           <div className="flex justify-between items-center max-w-7xl mx-auto">
             <div className="flex items-center space-x-8">
-              <h1 className="text-xl font-semibold text-journeyBlack dark:text-white">
+              <h1 className="text-xl font-semibold text-text-primary">
                 Journey Frontend
               </h1>
 
-              {/* Navigation */}
               <nav className="hidden md:flex space-x-6">
                 <Link
                   to="/middleware-demo"
-                  className="text-journeyGrayText dark:text-gray-300 hover:text-journeyBlack dark:hover:text-white transition-colors"
+                  className="text-text-secondary hover:text-text-primary transition-colors"
                 >
                   Middleware Demo
                 </Link>
                 <Link
                   to="/performance-demo"
-                  className="text-journeyGrayText dark:text-gray-300 hover:text-journeyBlack dark:hover:text-white transition-colors"
+                  className="text-text-secondary hover:text-text-primary transition-colors"
                 >
                   Performance Demo
                 </Link>
