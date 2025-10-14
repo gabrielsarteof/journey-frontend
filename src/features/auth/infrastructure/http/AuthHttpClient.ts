@@ -1,10 +1,6 @@
 // Removed HttpClient import - now using AuthRESTService interface
 import type { TokenStorage } from '../storage/TokenStorage'
-import {
-  AuthError,
-  ValidationError,
-  UnauthorizedError
-} from '../../domain/errors/AuthErrors'
+import { AuthError } from '../../domain/errors/AuthErrors'
 import type { ApiResponse, ApiError } from '../../domain/schemas/AuthSchemas'
 import type {
   AuthRESTService,
@@ -12,7 +8,8 @@ import type {
   SessionCredentials,
   UserResource,
   SessionResource,
-  ValidationResult
+  ValidationResult,
+  RegisterResponse
 } from '../repositories/ApiAuthRepository'
 
 // RESTful Service Implementation - SRP: only auth REST operations
@@ -22,10 +19,10 @@ export class AuthRESTServiceImpl implements AuthRESTService {
   private readonly tokenStorage: TokenStorage
 
   private readonly errorHandlers: Record<number, (message?: string) => AuthError> = {
-    400: (msg) => new ValidationError(msg || 'Dados inválidos'),
-    401: (msg) => new UnauthorizedError(msg),
+    400: (msg) => AuthError.validation(msg || 'Dados inválidos'),
+    401: (msg) => AuthError.unauthorized(msg),
     403: (msg) => new AuthError(msg || 'Acesso negado', 'FORBIDDEN', 403),
-    422: (msg) => new ValidationError(msg || 'Dados não processáveis'),
+    422: (msg) => AuthError.validation(msg || 'Dados não processáveis'),
   }
 
   constructor(baseURL: string, timeout: number, tokenStorage: TokenStorage) {
@@ -35,8 +32,8 @@ export class AuthRESTServiceImpl implements AuthRESTService {
   }
 
   // RESTful Auth Operations - following backend routes
-  async createUser(data: CreateUserData): Promise<UserResource> {
-    return this.request<UserResource>('/api/auth/register', {
+  async createUser(data: CreateUserData): Promise<RegisterResponse> {
+    return this.request<RegisterResponse>('/api/auth/register', {
       method: 'POST',
       body: JSON.stringify(data),
     })
@@ -68,15 +65,13 @@ export class AuthRESTServiceImpl implements AuthRESTService {
   }
 
   async validateUserField(field: 'email' | 'username', value: string): Promise<ValidationResult> {
-    return this.request<ValidationResult>(`/api/auth/validate?${field}=${encodeURIComponent(value)}`, {
-      method: 'GET',
-    })
+    // Endpoint não implementado - validação acontece no registro
+    console.warn('[AuthHttpClient] validateUserField - endpoint não disponível')
+    return Promise.resolve({ isAvailable: true })
   }
 
   private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
     const url = `${this.baseURL}${endpoint}`
-    console.log('[AuthHttpClient] Request URL:', url, 'Method:', options.method)
-
     const headers = this.buildHeaders(options.headers as Record<string, string> | undefined)
 
     const config: RequestInit = {
@@ -166,19 +161,11 @@ export class AuthRESTServiceImpl implements AuthRESTService {
     }
 
     if (error instanceof Error && error.name === 'AbortError') {
-      return new AuthError(
-        'Timeout na requisição',
-        'REQUEST_TIMEOUT',
-        408
-      )
+      return AuthError.timeout()
     }
 
     if (error instanceof TypeError && error.message.includes('fetch')) {
-      return new AuthError(
-        'Erro de conexão com o servidor',
-        'NETWORK_ERROR',
-        500
-      )
+      return AuthError.networkError()
     }
 
     return new AuthError(

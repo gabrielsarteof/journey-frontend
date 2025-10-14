@@ -101,6 +101,7 @@
 
   .placeholder-input::placeholder {
     color: var(--color-input-placeholder);
+    font-size: 1rem;
   }
 
   .text-auth-heading {
@@ -117,6 +118,14 @@
 
   .text-link {
     color: var(--color-link);
+  }
+
+  .text-error {
+    color: var(--color-error-text);
+  }
+
+  .placeholder-error::placeholder {
+    color: var(--color-error-text);
   }
 }
 
@@ -241,6 +250,12 @@
   initial-value: #6b7280;
 }
 
+@property --color-error-text {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #dc2626;
+}
+
 /* Define as cores base no :root para serem referenciadas */
 :root {
   --base-background: #ffffff;
@@ -266,6 +281,7 @@
   --base-divider: #d1d5db;
   --base-divider-text: #6b7280;
   --base-link: #6b7280;
+  --base-error-text: #dc2626;
 }
 
 /* Theme variables referenciando as cores base */
@@ -293,6 +309,7 @@
   --color-divider: var(--base-divider);
   --color-divider-text: var(--base-divider-text);
   --color-link: var(--base-link);
+  --color-error-text: var(--base-error-text);
 }
 
 @theme {
@@ -386,6 +403,7 @@
   --base-divider: #333333;
   --base-divider-text: #9ca3af;
   --base-link: #9ca3af;
+  --base-error-text: #f87171;
 }
 
 [data-theme="dark"] {
@@ -504,12 +522,16 @@ body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
-  overflow-y: hidden;
-  width: 100dvw;
+  width: 100%;
+  height: 100%;
   background: var(--color-background);
-  overscroll-behavior: contain;
   font-family: DIN, system-ui, -apple-system, sans-serif;
   font-weight: 400;
+}
+
+#root {
+  min-height: 100vh;
+  width: 100%;
 }
 
 /* Screen reader only: oculta visualmente mas mantém acessível para leitores de tela */

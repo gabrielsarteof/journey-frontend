@@ -9,7 +9,7 @@ import { UserMapper } from '../mappers/UserMapper'
 
 // RESTful Service Interface - SRP: only auth operations
 export interface AuthRESTService {
-  createUser(data: CreateUserData): Promise<UserResource>
+  createUser(data: CreateUserData): Promise<RegisterResponse>
   createSession(credentials: SessionCredentials): Promise<SessionResource>
   getCurrentUser(): Promise<UserResource>
   refreshSession(refreshToken: string): Promise<SessionResource>
@@ -17,12 +17,18 @@ export interface AuthRESTService {
   validateUserField(field: 'email' | 'username', value: string): Promise<ValidationResult>
 }
 
+export interface RegisterResponse {
+  user: UserResource
+  accessToken: string
+  refreshToken: string
+}
+
 // RESTful Resource DTOs
 export interface CreateUserData {
   email: string
   name: string
   password: string
-  confirmPassword: string
+  acceptTerms: boolean
 }
 
 export interface SessionCredentials {
@@ -75,19 +81,18 @@ export class ApiAuthRepository extends BaseService implements AuthRepository, Au
     return this.executeWithMetrics(
       'register',
       async () => {
-        const userResource = await this.authRESTService.createUser({
+        const response = await this.authRESTService.createUser({
           email: data.email,
           name: data.name,
           password: data.password,
-          confirmPassword: data.confirmPassword
+          acceptTerms: data.acceptTerms
         });
 
-        const sessionResource = await this.authRESTService.createSession({
-          email: data.email,
-          password: data.password
-        });
-
-        return this.mapToAuthResult(userResource, sessionResource);
+        return {
+          user: UserMapper.toDomain(response.user),
+          accessToken: response.accessToken,
+          refreshToken: response.refreshToken
+        };
       }
     );
   }

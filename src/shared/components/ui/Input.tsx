@@ -69,15 +69,19 @@ export function Input({
     }
   }
 
-  const baseClasses = `
-    w-full bg-input border-2 border-input rounded-2xl px-4 py-3 sm:px-5 sm:py-4
-    text-sm sm:text-base
-    focus:outline-none focus:border-input-focus transition-all duration-200
-    text-input placeholder-input
-    ${hasError
-      ? 'border-journeyIncorrectRed focus:border-journeyIncorrectRed text-journeyIncorrectRed placeholder-journeyIncorrectRed'
-      : ''}
-  `
+  const baseClasses = clsx(
+    'w-full bg-input border-2 rounded-2xl px-4 py-3 sm:px-5 sm:py-4',
+    'text-sm sm:text-base',
+    'focus:outline-none transition-all duration-200',
+    {
+      // Estado normal
+      'border-input text-input placeholder-input': !hasError,
+      'focus:border-input-focus': !hasError,
+      // Estado de erro - apenas borda e texto mudam (usando variáveis CSS do tema)
+      'border-journeyIncorrectRed focus:border-journeyIncorrectRed': hasError,
+      'text-error placeholder-error': hasError,
+    }
+  )
 
   return (
     <div className="space-y-2">
