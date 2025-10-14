@@ -9,7 +9,8 @@ import type {
   UserResource,
   SessionResource,
   ValidationResult,
-  RegisterResponse
+  RegisterResponse,
+  RefreshResponse
 } from '../repositories/ApiAuthRepository'
 
 // RESTful Service Implementation - SRP: only auth REST operations
@@ -39,8 +40,8 @@ export class AuthRESTServiceImpl implements AuthRESTService {
     })
   }
 
-  async createSession(credentials: SessionCredentials): Promise<SessionResource> {
-    return this.request<SessionResource>('/api/auth/login', {
+  async createSession(credentials: SessionCredentials): Promise<RegisterResponse> {
+    return this.request<RegisterResponse>('/api/auth/login', {
       method: 'POST',
       body: JSON.stringify(credentials),
     })
@@ -50,8 +51,8 @@ export class AuthRESTServiceImpl implements AuthRESTService {
     return this.request<UserResource>('/api/auth/me', { method: 'GET' })
   }
 
-  async refreshSession(refreshToken: string): Promise<SessionResource> {
-    return this.request<SessionResource>('/api/auth/refresh', {
+  async refreshSession(refreshToken: string): Promise<RefreshResponse> {
+    return this.request<RefreshResponse>('/api/auth/refresh', {
       method: 'POST',
       body: JSON.stringify({ refreshToken }),
     })

@@ -16,6 +16,7 @@ interface AuthActions {
   setError: (error: string | null) => void
   setLoading: (loading: boolean) => void
   clearError: () => void
+  setHasHydrated: (hasHydrated: boolean) => void
 }
 
 type AuthStore = AuthState & AuthActions
@@ -32,6 +33,7 @@ export function createAuthStore() {
       isAuthenticated: false,
       isLoading: false,
       error: null,
+      hasHydrated: false,
 
       login: async (data: LoginDTO) => {
         try {
@@ -39,7 +41,6 @@ export function createAuthStore() {
 
           const result = await authService.authenticate(data)
 
-          // Cache com TTL baseado no token
           await cacheService.set('current_user', result.user, 15 * 60 * 1000)
           await cacheService.set('access_token', result.accessToken, 15 * 60 * 1000)
           await cacheService.set('refresh_token', result.refreshToken, 7 * 24 * 60 * 60 * 1000)
@@ -54,7 +55,6 @@ export function createAuthStore() {
             isLoading: false,
           })
         } catch (error) {
-          // Extrai mensagem localizada do AuthDomainError
           const errorMessage = error instanceof AuthDomainError
             ? error.getDisplayMessage()
             : 'Erro inesperado ao fazer login. Por favor, tente novamente.'
@@ -88,7 +88,6 @@ export function createAuthStore() {
             isLoading: false,
           })
         } catch (error) {
-          // Extrai mensagem localizada do AuthDomainError
           const errorMessage = error instanceof AuthDomainError
             ? error.getDisplayMessage()
             : 'Erro inesperado ao criar conta. Por favor, tente novamente.'
@@ -184,6 +183,10 @@ export function createAuthStore() {
       clearError: () => {
         set({ error: null })
       },
+
+      setHasHydrated: (hasHydrated: boolean) => {
+        set({ hasHydrated })
+      },
     }),
     {
       name: env.AUTH_SESSION_STORAGE_KEY,
@@ -192,6 +195,9 @@ export function createAuthStore() {
         tokens: state.tokens,
         isAuthenticated: state.isAuthenticated,
       }),
+      onRehydrateStorage: () => (state) => {
+        state?.setHasHydrated(true)
+      },
     }
   ) : (set, get) => ({
     user: null,
@@ -199,6 +205,7 @@ export function createAuthStore() {
     isAuthenticated: false,
     isLoading: false,
     error: null,
+    hasHydrated: true, // Sem persist, considera sempre hidratado
 
     login: async (data: LoginDTO) => {
       try {
@@ -337,6 +344,10 @@ export function createAuthStore() {
 
     clearError: () => {
       set({ error: null })
+    },
+
+    setHasHydrated: (hasHydrated: boolean) => {
+      set({ hasHydrated })
     },
   })
   )

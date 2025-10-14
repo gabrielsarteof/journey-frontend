@@ -1,7 +1,8 @@
-import { createRootRoute, Outlet, Link, useRouterState } from '@tanstack/react-router'
+import { createRootRouteWithContext, Outlet, Link, useRouterState } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 import { NotificationContainer } from '../shared/components/ui/NotificationContainer'
 import { ThemeToggle } from '../shared/components/ui/ThemeToggle'
+import type { RouterContext } from '../shared/types/router'
 
 function RootComponent() {
   const router = useRouterState()
@@ -58,6 +59,6 @@ function RootComponent() {
   )
 }
 
-export const Route = createRootRoute({
+export const Route = createRootRouteWithContext<RouterContext>()({
   component: RootComponent,
 })

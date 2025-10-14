@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo, useEffect } from 'react'
-import { useNavigate } from '@tanstack/react-router'
+import { useNavigate, useSearch } from '@tanstack/react-router'
 import { Input } from '../../../../shared/components/ui/Input'
 import { Button } from '../../../../shared/components/ui/Button'
 import { FormErrorMessage } from '../../../../shared/components/ui/FormErrorMessage'
@@ -164,12 +164,13 @@ const PasswordInput = ({ value, onChange, onBlur, hasError = false }: {
 
 export function RegisterPage() {
   const navigate = useNavigate()
+  const search = useSearch({ from: '/auth/register' })
   const { register, isLoading, error, clearError } = useAuth()
 
-  // Define o título da página como "Cadastro | Journey"
+  const redirectUrl = (search as any)?.redirect || '/dashboard'
+
   useDocumentTitle('Cadastro')
 
-  // Limpa erros ao montar o componente
   useEffect(() => {
     clearError()
   }, [])
@@ -306,7 +307,6 @@ export function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    // Marca todos os campos como tocados ao tentar submeter
     setTouchedFields({
       name: true,
       email: true,
@@ -331,14 +331,17 @@ export function RegisterPage() {
       }
 
       await register(registerData)
-      navigate({ to: '/' })
+
+      // Aguarda persistência do estado no localStorage via Zustand middleware
+      await new Promise(resolve => setTimeout(resolve, 100))
+
+      navigate({ to: redirectUrl as any })
     } catch (err) {
       console.error('Register error:', err)
     }
   }
 
   const handleButtonClick = async () => {
-    // Marca todos os campos como tocados ao tentar submeter
     setTouchedFields({
       name: true,
       email: true,
@@ -363,7 +366,11 @@ export function RegisterPage() {
       }
 
       await register(registerData)
-      navigate({ to: '/' })
+
+      // Aguarda persistência do estado no localStorage via Zustand middleware
+      await new Promise(resolve => setTimeout(resolve, 100))
+
+      navigate({ to: redirectUrl as any })
     } catch (err) {
       console.error('Register error:', err)
     }

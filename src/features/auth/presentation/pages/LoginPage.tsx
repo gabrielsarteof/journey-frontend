@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react'
-import { useNavigate } from '@tanstack/react-router'
+import { useNavigate, useSearch } from '@tanstack/react-router'
 import { Input } from '../../../../shared/components/ui/Input'
 import { Button } from '../../../../shared/components/ui/Button'
 import { FormErrorMessage } from '../../../../shared/components/ui/FormErrorMessage'
@@ -15,11 +15,13 @@ interface LoginFormData extends LoginDTO {}
 
 export function LoginPage() {
   const navigate = useNavigate()
+  const search = useSearch({ from: '/auth/login' })
   const { login, isLoading, error, clearError } = useAuth()
+
+  const redirectUrl = (search as any)?.redirect || '/dashboard'
 
   useDocumentTitle('Login')
 
-  // Limpa erros ao montar o componente
   useEffect(() => {
     clearError()
   }, [])
@@ -129,7 +131,6 @@ export function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    // Marca todos os campos como tocados ao tentar submeter
     setTouchedFields({
       email: true,
       password: true
@@ -148,14 +149,17 @@ export function LoginPage() {
       }
 
       await login(loginData)
-      navigate({ to: '/' })
+
+      // Aguarda persistência do estado no localStorage via Zustand middleware
+      await new Promise(resolve => setTimeout(resolve, 100))
+
+      navigate({ to: redirectUrl as any })
     } catch (err) {
       console.error('Login error:', err)
     }
   }
 
   const handleButtonClick = async () => {
-    // Marca todos os campos como tocados ao tentar submeter
     setTouchedFields({
       email: true,
       password: true
@@ -174,7 +178,11 @@ export function LoginPage() {
       }
 
       await login(loginData)
-      navigate({ to: '/' })
+
+      // Aguarda persistência do estado no localStorage via Zustand middleware
+      await new Promise(resolve => setTimeout(resolve, 100))
+
+      navigate({ to: redirectUrl as any })
     } catch (err) {
       console.error('Login error:', err)
     }
