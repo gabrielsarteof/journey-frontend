@@ -8,11 +8,15 @@ import { CacheService, LocalStorageCacheStrategy } from '@/shared/domain/contrac
 import { ConsoleOperationLogger } from '@/shared/infrastructure/logging/OperationLogger';
 import { CircuitBreaker, InMemoryCircuitBreakerStorage } from '@/shared/infrastructure/resilience/CircuitBreaker';
 import { ErrorTransformer } from '@/shared/infrastructure/errors/ErrorTransformer';
+import { env } from '@/shared/config/env';
 
 // Factory following SOLID + DI principles
 class AuthRESTServiceFactory {
   static create(): AuthRESTServiceImpl {
-    const tokenStorage = new LocalStorageTokenStorage('auth_token', 'auth_refresh_token');
+    const tokenStorage = new LocalStorageTokenStorage(
+      env.AUTH_TOKEN_STORAGE_KEY,
+      env.AUTH_REFRESH_TOKEN_STORAGE_KEY
+    );
     return new AuthRESTServiceImpl(
       import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000',
       10000, // timeout
