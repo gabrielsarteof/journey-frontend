@@ -58,8 +58,37 @@
   }
 
   /* Classes que precisam reagir ao tema */
+  .text-text-primary {
+    color: var(--color-text-primary);
+  }
+
+  .text-text-secondary {
+    color: var(--color-text-secondary);
+  }
+
   .text-text-button-secondary {
     color: var(--color-text-button-secondary);
+  }
+
+  /* Classes de cores de gamificação */
+  .text-orange {
+    color: var(--color-orange);
+  }
+
+  .text-gold {
+    color: var(--color-gold);
+  }
+
+  .text-success {
+    color: var(--color-success);
+  }
+
+  .text-error {
+    color: var(--color-error);
+  }
+
+  .bg-gold {
+    background-color: var(--color-gold);
   }
 
   .border-border-secondary {
@@ -324,8 +353,8 @@
   --color-border-muted: #e5e7eb;
   --color-border-strong: #2b383f;
 
-  /* Brand/Primárias - cor principal do projeto é #0f0f0f (preto) */
-  --color-primary: #0f0f0f;
+  /* Brand/Primárias - cor principal do projeto é #121212 */
+  --color-primary: #121212;
   --color-primary-hover: #333333;
   --color-primary-active: #1a1a1a;
   --color-secondary: #4bb0f6;
@@ -373,6 +402,18 @@
   --shadow-badge-pink: 0 5px 0 #cc6ba7;
   --shadow-badge-locked: 0 8px 0 #2b383f;
 
+  /* Cores dos módulos */
+  --color-module-backend: #8b5cf6;
+  --color-module-backend-shadow: #7c3aed;
+  --color-module-frontend: #06b6d4;
+  --color-module-frontend-shadow: #0891b2;
+  --color-module-devops: #10b981;
+  --color-module-devops-shadow: #059669;
+  --color-module-mobile: #ec4899;
+  --color-module-mobile-shadow: #db2777;
+  --color-module-data: #3b82f6;
+  --color-module-data-shadow: #2563eb;
+
   /* Tipografia */
   --font-family-sans: DIN, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-family-din: DIN, sans-serif;
@@ -419,9 +460,9 @@
     --color-border-strong: #4a5a64;
 
     /* Brand/Primárias */
-    --color-primary: #0f0f0f;
-    --color-primary-hover: #333333;
-    --color-primary-active: #1a1a1a;
+    --color-primary: #fafafa;
+    --color-primary-hover: #e0e0e0;
+    --color-primary-active: #d0d0d0;
     --color-secondary: #4bb0f6;
     --color-secondary-hover: #5dc0ff;
     --color-secondary-active: #4099d6;
@@ -461,7 +502,50 @@
     --shadow-badge-primary: 0 5px 0 #357ab8;
     --shadow-badge-pink: 0 5px 0 #a5548a;
     --shadow-badge-locked: 0 8px 0 #1a2730;
+
+    /* Cores dos módulos - mesmas em dark mode */
+    --color-module-backend: #8b5cf6;
+    --color-module-backend-shadow: #7c3aed;
+    --color-module-frontend: #06b6d4;
+    --color-module-frontend-shadow: #0891b2;
+    --color-module-devops: #10b981;
+    --color-module-devops-shadow: #059669;
+    --color-module-mobile: #ec4899;
+    --color-module-mobile-shadow: #db2777;
+    --color-module-data: #3b82f6;
+    --color-module-data-shadow: #2563eb;
   }
+}
+
+/* Classes de módulos - fora do @layer para garantir aplicação */
+.module-backend {
+  background-color: var(--color-module-backend);
+  box-shadow: 0 8px 0 var(--color-module-backend-shadow);
+}
+
+.module-frontend {
+  background-color: var(--color-module-frontend);
+  box-shadow: 0 8px 0 var(--color-module-frontend-shadow);
+}
+
+.module-devops {
+  background-color: var(--color-module-devops);
+  box-shadow: 0 8px 0 var(--color-module-devops-shadow);
+}
+
+.module-mobile {
+  background-color: var(--color-module-mobile);
+  box-shadow: 0 8px 0 var(--color-module-mobile-shadow);
+}
+
+.module-data {
+  background-color: var(--color-module-data);
+  box-shadow: 0 8px 0 var(--color-module-data-shadow);
+}
+
+.module-active {
+  box-shadow: none !important;
+  transform: translateY(8px);
 }
 
 @keyframes bob {

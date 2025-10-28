@@ -1,89 +1,111 @@
-import { useState } from 'react'
+import { useMemo } from 'react'
 import { DashboardLayout } from '../layouts/DashboardLayout'
 import { UnitBanner } from '../components/UnitBanner'
 import { UnitPath } from '../components/UnitPath'
-
-// Dados mockados estáticos
-const mockUnits = [
-  {
-    id: 1,
-    orderIndex: 1,
-    title: 'Get Started with JavaScript',
-    color: '#58cc04',
-    lessons: [
-      { id: 1, title: 'Intro', type: 'lesson' as const, status: 'completed' as const },
-      { id: 2, title: 'Variables', type: 'lesson' as const, status: 'completed' as const },
-      { id: 3, title: 'Practice', type: 'practice' as const, status: 'available' as const },
-      { id: 4, title: 'Functions', type: 'lesson' as const, status: 'available' as const },
-      { id: 5, title: 'Review', type: 'review' as const, status: 'locked' as const },
-    ],
-  },
-  {
-    id: 2,
-    orderIndex: 2,
-    title: 'Control Flow',
-    color: '#4bb0f6',
-    lessons: [
-      { id: 6, title: 'If/Else', type: 'lesson' as const, status: 'locked' as const },
-      { id: 7, title: 'Loops', type: 'lesson' as const, status: 'locked' as const },
-      { id: 8, title: 'Story', type: 'story' as const, status: 'locked' as const },
-      { id: 9, title: 'Practice', type: 'practice' as const, status: 'locked' as const },
-    ],
-  },
-  {
-    id: 3,
-    orderIndex: 3,
-    title: 'Data Structures',
-    color: '#f886d0',
-    lessons: [
-      { id: 10, title: 'Arrays', type: 'lesson' as const, status: 'locked' as const },
-      { id: 11, title: 'Objects', type: 'lesson' as const, status: 'locked' as const },
-      { id: 12, title: 'Practice', type: 'practice' as const, status: 'locked' as const },
-      { id: 13, title: 'Story', type: 'story' as const, status: 'locked' as const },
-      { id: 14, title: 'Review', type: 'review' as const, status: 'locked' as const },
-    ],
-  },
-]
+import { Challenge } from '../../domain/entities/Challenge'
+import { ChallengeStatus } from '../../domain/value-objects/ChallengeStatus'
+import { ChallengeType } from '../../domain/value-objects/ChallengeType'
+import { PlanetAssetCatalog } from '../../infrastructure/repositories/PlanetAssetCatalog'
+import { useModules } from '../hooks/useModules'
 
 export function DashboardPage() {
-  const [currentUnit] = useState(mockUnits[0])
+  const { modules, isLoading, error } = useModules()
+
+  const startChallenge = useMemo(
+    () =>
+      Challenge.create({
+        id: 'start',
+        title: 'Iniciar Jornada',
+        type: ChallengeType.lesson(),
+        status: ChallengeStatus.available(),
+        planetAsset: PlanetAssetCatalog.getAsset('earth'),
+        orderIndex: 0,
+        points: 0,
+      }),
+    []
+  )
+
+  const handleChallengeClick = (challenge: Challenge) => {
+    if (challenge.canBeStarted()) {
+      // Navegação para challenge será implementada
+    }
+  }
+
+  if (isLoading) {
+    return (
+      <DashboardLayout>
+        <div className="w-full h-full flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-muted">Carregando módulos...</p>
+          </div>
+        </div>
+      </DashboardLayout>
+    )
+  }
+
+  if (error) {
+    return (
+      <DashboardLayout>
+        <div className="w-full h-full flex items-center justify-center">
+          <div className="text-center">
+            <p className="text-destructive mb-4">Erro ao carregar módulos</p>
+            <p className="text-sm text-muted">{error.message}</p>
+          </div>
+        </div>
+      </DashboardLayout>
+    )
+  }
+
+  if (modules.length === 0) {
+    return (
+      <DashboardLayout>
+        <div className="w-full h-full flex items-center justify-center">
+          <p className="text-muted">Nenhum módulo disponível</p>
+        </div>
+      </DashboardLayout>
+    )
+  }
+
+  const currentModule = modules[0]
 
   return (
     <DashboardLayout>
-      <div className="w-full h-full pb-20 lg:pb-0 bg-duoBackground overflow-y-auto">
-        {/* Banner da unidade atual */}
-        <div className="w-full flex justify-center py-6">
+      <div className="w-full h-full bg-background overflow-y-auto transition-colors">
+        <div className="w-full flex justify-center py-8 lg:py-12 px-4">
           <UnitBanner
-            unitNumber={currentUnit.orderIndex}
-            title={currentUnit.title}
-            color={currentUnit.color}
+            unitNumber={currentModule.orderIndex}
+            title={currentModule.title}
+            description={currentModule.description}
+            moduleSlug={currentModule.slug}
           />
         </div>
 
-        {/* Caminho de unidades e lições */}
-        <div className="w-full flex flex-col items-center">
-          {mockUnits.map((unit, index) => (
+        <div className="flex flex-col items-center mb-12 lg:mb-16">
+          <p className="text-primary font-bold text-sm uppercase tracking-wider mb-4">COMEÇAR</p>
+          <button
+            onClick={() => handleChallengeClick(startChallenge)}
+            className="w-24 h-24 lg:w-28 lg:h-28 rounded-full flex items-center justify-center overflow-hidden hover:brightness-110 active:scale-95 transition-all cursor-pointer focus:outline-none focus-visible:outline-none relative"
+          >
+            <img
+              src={startChallenge.planetAsset.path}
+              alt={startChallenge.planetAsset.altText}
+              className="w-full h-full object-cover"
+            />
+          </button>
+        </div>
+
+        <div className="w-full flex flex-col items-center px-4 lg:px-0">
+          {modules.map((module, index) => (
             <UnitPath
-              key={unit.id}
-              unitNumber={unit.orderIndex}
-              title={unit.title}
-              color={unit.color}
-              lessons={unit.lessons}
+              key={module.id}
+              unitNumber={module.orderIndex}
+              title={module.title}
+              moduleSlug={module.slug}
+              lessons={module.challenges}
               showBreak={index > 0}
             />
           ))}
-        </div>
-
-        {/* Mensagem motivacional */}
-        <div className="flex justify-center mt-16 mb-8">
-          <div className="max-w-md text-center p-6 bg-duoDarkGray rounded-2xl border-2 border-duoGrayBorder">
-            <p className="text-white text-lg font-bold mb-2">
-              Keep going! 🚀
-            </p>
-            <p className="text-duoGrayText">
-              You're making great progress in your learning journey.
-            </p>
-          </div>
         </div>
       </div>
     </DashboardLayout>
