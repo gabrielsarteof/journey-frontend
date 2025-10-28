@@ -18,7 +18,6 @@ export function LandingPage({ heroImage }: LandingPageProps) {
   // Performance optimization para resize events
   const handleResize = useCallback(() => {
     // Layout optimization on resize - pode ser usado para ajustes responsivos
-    console.log('Window resized with throttle optimization')
   }, [])
 
   // Strategy Pattern aplicado a eventos de janela
