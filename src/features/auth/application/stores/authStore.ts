@@ -41,6 +41,9 @@ export function createAuthStore() {
 
           const result = await authService.authenticate(data)
 
+          localStorage.setItem(env.AUTH_TOKEN_STORAGE_KEY, result.accessToken)
+          localStorage.setItem(env.AUTH_REFRESH_TOKEN_STORAGE_KEY, result.refreshToken)
+
           await cacheService.set('current_user', result.user, 15 * 60 * 1000)
           await cacheService.set('access_token', result.accessToken, 15 * 60 * 1000)
           await cacheService.set('refresh_token', result.refreshToken, 7 * 24 * 60 * 60 * 1000)
@@ -73,6 +76,9 @@ export function createAuthStore() {
           set({ isLoading: true, error: null })
 
           const result = await authService.register(data)
+
+          localStorage.setItem(env.AUTH_TOKEN_STORAGE_KEY, result.accessToken)
+          localStorage.setItem(env.AUTH_REFRESH_TOKEN_STORAGE_KEY, result.refreshToken)
 
           await cacheService.set('current_user', result.user, 15 * 60 * 1000)
           await cacheService.set('access_token', result.accessToken, 15 * 60 * 1000)
@@ -110,7 +116,9 @@ export function createAuthStore() {
         } catch (error) {
           console.error('Erro ao fazer logout:', error)
         } finally {
-          // Limpa cache de auth
+          localStorage.removeItem(env.AUTH_TOKEN_STORAGE_KEY)
+          localStorage.removeItem(env.AUTH_REFRESH_TOKEN_STORAGE_KEY)
+
           await cacheService.clear('current_user')
           await cacheService.clear('access_token')
           await cacheService.clear('refresh_token')
@@ -134,6 +142,9 @@ export function createAuthStore() {
 
           const result = await authService.refreshAuthentication(new RefreshToken(refreshToken))
 
+          localStorage.setItem(env.AUTH_TOKEN_STORAGE_KEY, result.accessToken)
+          localStorage.setItem(env.AUTH_REFRESH_TOKEN_STORAGE_KEY, result.refreshToken)
+
           set({
             user: result.user,
             tokens: {
@@ -143,6 +154,9 @@ export function createAuthStore() {
             isAuthenticated: true,
           })
         } catch (error) {
+          localStorage.removeItem(env.AUTH_TOKEN_STORAGE_KEY)
+          localStorage.removeItem(env.AUTH_REFRESH_TOKEN_STORAGE_KEY)
+
           set({
             user: null,
             tokens: null,
@@ -213,6 +227,9 @@ export function createAuthStore() {
 
         const result = await authService.authenticate(data)
 
+        localStorage.setItem(env.AUTH_TOKEN_STORAGE_KEY, result.accessToken)
+        localStorage.setItem(env.AUTH_REFRESH_TOKEN_STORAGE_KEY, result.refreshToken)
+
         set({
           user: result.user,
           tokens: {
@@ -223,7 +240,6 @@ export function createAuthStore() {
           isLoading: false,
         })
       } catch (error) {
-        // Extrai mensagem localizada do AuthDomainError
         const errorMessage = error instanceof AuthDomainError
           ? error.getDisplayMessage()
           : 'Erro inesperado ao fazer login. Por favor, tente novamente.'
@@ -243,6 +259,9 @@ export function createAuthStore() {
 
         const result = await authService.register(data)
 
+        localStorage.setItem(env.AUTH_TOKEN_STORAGE_KEY, result.accessToken)
+        localStorage.setItem(env.AUTH_REFRESH_TOKEN_STORAGE_KEY, result.refreshToken)
+
         set({
           user: result.user,
           tokens: {
@@ -253,7 +272,6 @@ export function createAuthStore() {
           isLoading: false,
         })
       } catch (error) {
-        // Extrai mensagem localizada do AuthDomainError
         const errorMessage = error instanceof AuthDomainError
           ? error.getDisplayMessage()
           : 'Erro inesperado ao criar conta. Por favor, tente novamente.'
@@ -277,6 +295,9 @@ export function createAuthStore() {
       } catch (error) {
         console.error('Erro ao fazer logout:', error)
       } finally {
+        localStorage.removeItem(env.AUTH_TOKEN_STORAGE_KEY)
+        localStorage.removeItem(env.AUTH_REFRESH_TOKEN_STORAGE_KEY)
+
         set({
           user: null,
           tokens: null,
@@ -296,6 +317,9 @@ export function createAuthStore() {
 
         const result = await authService.refreshAuthentication(new RefreshToken(refreshToken))
 
+        localStorage.setItem(env.AUTH_TOKEN_STORAGE_KEY, result.accessToken)
+        localStorage.setItem(env.AUTH_REFRESH_TOKEN_STORAGE_KEY, result.refreshToken)
+
         set({
           user: result.user,
           tokens: {
@@ -305,6 +329,9 @@ export function createAuthStore() {
           isAuthenticated: true,
         })
       } catch (error) {
+        localStorage.removeItem(env.AUTH_TOKEN_STORAGE_KEY)
+        localStorage.removeItem(env.AUTH_REFRESH_TOKEN_STORAGE_KEY)
+
         set({
           user: null,
           tokens: null,
