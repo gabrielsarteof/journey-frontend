@@ -7,12 +7,13 @@ import { BaseHttpClient, type HttpRequestConfig, type HttpResponse } from '../do
 import { ConsoleOperationLogger } from '../infrastructure/logging/OperationLogger'
 import { RetryStrategy } from '../infrastructure/resilience/RetryStrategy'
 import { ErrorTransformer } from '../infrastructure/errors/ErrorTransformer'
+import type { AuthTokenProvider } from '@/features/auth/domain/services/AuthTokenProvider'
 
 export interface HttpClientOptions {
   baseUrl?: string
   defaultHeaders?: Record<string, string>
   enableLogging?: boolean
-  tokenGetter?: () => string | null
+  tokenProvider?: AuthTokenProvider
 }
 
 export class HttpClient extends BaseHttpClient {
@@ -46,6 +47,10 @@ export class HttpClient extends BaseHttpClient {
 
   async put<T>(endpoint: string, data?: any, config?: HttpRequestConfig): Promise<T> {
     return this.executeRequest<T>('PUT', endpoint, config, data)
+  }
+
+  async patch<T>(endpoint: string, data?: any, config?: HttpRequestConfig): Promise<T> {
+    return this.executeRequest<T>('PATCH', endpoint, config, data)
   }
 
   async delete<T>(endpoint: string, config?: HttpRequestConfig): Promise<T> {
@@ -130,11 +135,9 @@ export class HttpClient extends BaseHttpClient {
       })
     )
 
-    if (this.options.tokenGetter) {
+    if (this.options.tokenProvider) {
       this.middlewareChain.addMiddleware(
-        new AuthMiddleware({
-          tokenGetter: this.options.tokenGetter
-        })
+        new AuthMiddleware(this.options.tokenProvider)
       )
     }
 

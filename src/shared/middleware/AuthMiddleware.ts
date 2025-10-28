@@ -1,20 +1,20 @@
 import { BaseMiddleware } from '../abstractions/Middleware'
 import type { MiddlewareContext, MiddlewareNext } from '../abstractions/Middleware'
+import { AuthTokenProvider } from '@/features/auth/domain/services/AuthTokenProvider'
 
-export interface AuthMiddlewareOptions {
-  tokenGetter: () => string | null
-}
-
+/**
+ * Middleware responsável por injetar o token JWT no header Authorization.
+ *
+ * Recebe AuthTokenProvider via construtor para desacoplar a lógica de obtenção
+ * de token da lógica de interceptação HTTP.
+ */
 export class AuthMiddleware extends BaseMiddleware {
-  private readonly tokenGetter: () => string | null
-
-  constructor(options: AuthMiddlewareOptions) {
+  constructor(private readonly tokenProvider: AuthTokenProvider) {
     super('AuthMiddleware')
-    this.tokenGetter = options.tokenGetter
   }
 
   async execute(context: MiddlewareContext, next: MiddlewareNext): Promise<MiddlewareContext> {
-    const token = this.tokenGetter()
+    const token = this.tokenProvider.getCurrentAccessToken()
 
     if (token) {
       const modifiedContext: MiddlewareContext = {
@@ -23,7 +23,7 @@ export class AuthMiddleware extends BaseMiddleware {
           ...context.request,
           headers: {
             ...context.request.headers,
-            'Authorization': `Bearer ${token}`
+            'Authorization': `Bearer ${token.getValue()}`
           }
         }
       }
