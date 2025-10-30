@@ -2,6 +2,7 @@ import { useMemo } from 'react'
 import { DashboardLayout } from '../layouts/DashboardLayout'
 import { UnitBanner } from '../components/UnitBanner'
 import { UnitPath } from '../components/UnitPath'
+import { DashboardSkeleton } from '../components/DashboardSkeleton'
 import { Challenge } from '../../domain/entities/Challenge'
 import { ChallengeStatus } from '../../domain/value-objects/ChallengeStatus'
 import { ChallengeType } from '../../domain/value-objects/ChallengeType'
@@ -34,12 +35,7 @@ export function DashboardPage() {
   if (isLoading) {
     return (
       <DashboardLayout>
-        <div className="w-full h-full flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-muted">Carregando módulos...</p>
-          </div>
-        </div>
+        <DashboardSkeleton />
       </DashboardLayout>
     )
   }

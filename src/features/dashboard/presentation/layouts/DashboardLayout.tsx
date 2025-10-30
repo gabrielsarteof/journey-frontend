@@ -3,12 +3,15 @@ import { DashboardLeftSidebar } from '../components/DashboardLeftSidebar'
 import { DashboardRightSidebar } from '../components/DashboardRightSidebar'
 import { DashboardFooter } from '../components/DashboardFooter'
 import { UserStats } from '../components/UserStats'
+import { useAuthRedirect } from '@/features/auth/presentation/hooks/useAuthRedirect'
 
 interface DashboardLayoutProps {
   children: ReactNode
 }
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
+  useAuthRedirect()
+
   return (
     <div className="min-h-screen h-screen bg-background scrollbar-journeyBlack max-h-screen lg:grid lg:grid-cols-[auto_minmax(0,1fr)_auto] overflow-y-auto overscroll-none transition-colors">
       {/* Mobile Header - visible only on mobile */}

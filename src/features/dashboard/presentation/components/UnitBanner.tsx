@@ -38,20 +38,20 @@ export function UnitBanner({ unitNumber, title, description, moduleSlug }: UnitB
     >
       <div className="flex items-center h-28 px-6">
         <div className="flex-1">
-          <p className="text-sm font-bold uppercase tracking-wider mb-1 text-primary-button opacity-80">
+          <p className="text-sm font-bold uppercase tracking-wider mb-1 text-primary opacity-80">
             MÓDULO {unitNumber}
           </p>
-          <p className="text-2xl font-bold text-primary-button mb-1">
+          <p className="text-2xl font-bold text-primary mb-1">
             {title}
           </p>
           {description && (
-            <p className="text-sm text-primary-button opacity-70 font-medium">
+            <p className="text-sm text-primary opacity-70 font-medium">
               {description}
             </p>
           )}
         </div>
         <div className="flex items-center justify-center w-20 h-20 border-l-2 border-white/20">
-          <IconComponent className="w-12 h-12 text-primary-button opacity-90" />
+          <IconComponent className="w-12 h-12 text-primary opacity-90" />
         </div>
       </div>
     </div>

@@ -30,7 +30,7 @@ export function DashboardRightSidebar() {
               <h4 className="text-auth-heading font-bold text-base transition-colors">Desbloqueie as Ligas!</h4>
             </div>
           </div>
-          <p className="text-text-secondary text-sm transition-colors">
+          <p className="text-secondary text-sm transition-colors">
             Complete mais 10 lições pra começar a competir.
           </p>
         </div>

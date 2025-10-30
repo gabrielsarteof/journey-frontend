@@ -53,7 +53,7 @@ export function LessonButton({ challenge, onClick }: LessonButtonProps) {
     }
 
     return {
-      text: 'text-primary-button',
+      text: 'text-primary',
       cursor: 'cursor-pointer',
       hover: 'hover:brightness-110 hover:scale-105',
       opacity: ''

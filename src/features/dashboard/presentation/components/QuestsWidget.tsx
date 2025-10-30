@@ -28,7 +28,7 @@ export function QuestsWidget() {
               />
             </div>
 
-            <p className="text-text-secondary text-xs transition-colors">
+            <p className="text-secondary text-xs transition-colors">
               {quest.progress}/{quest.total} completed
             </p>
           </div>

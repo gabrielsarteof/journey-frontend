@@ -37,7 +37,7 @@ export function NavigationButtons({ variant = 'desktop' }: NavigationButtonsProp
             >
               <Icon
                 className={`w-6 h-6 transition-colors ${
-                  isActive ? 'text-text-primary' : 'text-text-primary/80'
+                  isActive ? 'text-primary' : 'text-primary'
                 }`}
               />
             </Link>
@@ -65,8 +65,8 @@ export function NavigationButtons({ variant = 'desktop' }: NavigationButtonsProp
               }
             `}
           >
-            <Icon className={`w-auto h-6 transition-colors ${isActive ? 'text-text-primary' : 'text-text-primary/80'}`} />
-            <p className={`text-sm font-bold uppercase tracking-wide transition-colors ${isActive ? 'text-text-primary' : 'text-text-primary/80'}`}>
+            <Icon className={`w-auto h-6 transition-colors ${isActive ? 'text-primary' : 'text-primary'}`} />
+            <p className={`text-sm font-bold uppercase tracking-wide transition-colors ${isActive ? 'text-primary' : 'text-primary'}`}>
               {item.label}
             </p>
           </Link>

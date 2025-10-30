@@ -75,7 +75,7 @@ export function LandingPage({ heroImage }: LandingPageProps) {
                 priority={true}
               />
             </div>
-            <p className="text-center font-light text-lg sm:text-xl lg:text-2xl max-w-md text-text-secondary transition-colors px-4">
+            <p className="text-center font-light text-lg sm:text-xl lg:text-2xl max-w-md text-secondary transition-colors px-4">
               O jeito ético, seguro e eficaz de aprender com IA
             </p>
           </div>

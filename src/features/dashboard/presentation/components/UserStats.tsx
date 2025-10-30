@@ -24,12 +24,12 @@ function StatItem({ icon: Icon, value, label, tooltip, color, onClick }: StatIte
       <Icon className={`w-6 h-6 ${color} transition-transform group-hover:scale-110`} />
       <div className="flex flex-col">
         <p className={`text-xl font-bold ${color}`}>{value}</p>
-        {label && <p className="text-xs text-text-secondary">{label}</p>}
+        {label && <p className="text-xs text-secondary">{label}</p>}
       </div>
 
       {tooltip && showTooltip && (
         <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-surface-elevated border-2 border-border-secondary rounded-lg shadow-lg z-50 min-w-max">
-          <div className="text-sm text-text-primary whitespace-nowrap">
+          <div className="text-sm text-primary whitespace-nowrap">
             {tooltip}
           </div>
           <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
@@ -57,7 +57,7 @@ function LoadingStats() {
 function ErrorStats({ onRetry }: { onRetry: () => void }) {
   return (
     <div className="flex w-full justify-center items-center gap-2">
-      <p className="text-sm text-text-secondary">Falha ao carregar estatísticas</p>
+      <p className="text-sm text-secondary">Falha ao carregar estatísticas</p>
       <button
         onClick={onRetry}
         className="text-sm text-secondary hover:underline"
@@ -95,8 +95,8 @@ export function UserStats() {
               {stats.streakStatus === 'AT_RISK' && 'Sequência em risco!'}
               {stats.streakStatus === 'BROKEN' && 'Sequência quebrada'}
             </p>
-            <p className="text-text-secondary text-xs">Recorde: {stats.longestStreak} dias</p>
-            <p className="text-text-secondary text-xs">
+            <p className="text-secondary text-xs">Recorde: {stats.longestStreak} dias</p>
+            <p className="text-secondary text-xs">
               Freezes: {stats.freezesAvailable}/2 disponíveis
             </p>
           </div>
@@ -110,7 +110,7 @@ export function UserStats() {
         tooltip={
           <div className="space-y-1">
             <p className="font-bold">Meta Diária</p>
-            <p className="text-text-secondary text-xs">
+            <p className="text-secondary text-xs">
               {stats.dailyXPEarned} / {stats.dailyXPTarget} XP
             </p>
             {stats.dailyGoalCompleted && (
@@ -127,7 +127,7 @@ export function UserStats() {
         tooltip={
           <div className="space-y-1">
             <p className="font-bold">XP Total Acumulado</p>
-            <p className="text-text-secondary text-xs">
+            <p className="text-secondary text-xs">
               Ganho hoje: +{stats.xpGainedToday} XP
             </p>
           </div>
@@ -145,7 +145,7 @@ export function UserStats() {
               Nível {stats.currentLevel} - {stats.levelTitle}
             </p>
             <div className="space-y-1">
-              <p className="text-text-secondary text-xs">
+              <p className="text-secondary text-xs">
                 Progresso para Nível {stats.currentLevel + 1}
               </p>
               <div className="w-40 h-2 bg-border-secondary rounded-full overflow-hidden">
@@ -154,7 +154,7 @@ export function UserStats() {
                   style={{ width: `${Math.min(stats.nextLevelProgress, 100)}%` }}
                 />
               </div>
-              <p className="text-text-secondary text-xs">
+              <p className="text-secondary text-xs">
                 {stats.totalXP.toLocaleString('pt-BR')} / {stats.nextLevelXP.toLocaleString('pt-BR')} XP ({Math.round(stats.nextLevelProgress)}%)
               </p>
             </div>
