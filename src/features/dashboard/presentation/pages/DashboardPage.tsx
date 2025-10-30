@@ -33,11 +33,7 @@ export function DashboardPage() {
   }
 
   if (isLoading) {
-    return (
-      <DashboardLayout>
-        <DashboardSkeleton />
-      </DashboardLayout>
-    )
+    return <DashboardSkeleton />
   }
 
   if (error) {
