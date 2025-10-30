@@ -20,20 +20,20 @@ function RootComponent() {
           <header className="p-4 border-b border-border-light bg-surface transition-colors flex-shrink-0">
             <div className="flex justify-between items-center max-w-7xl mx-auto">
               <div className="flex items-center space-x-8">
-                <h1 className="text-xl font-semibold text-text-primary">
+                <h1 className="text-xl font-semibold text-primary">
                   Journey Frontend
                 </h1>
 
                 <nav className="hidden md:flex space-x-6">
                   <Link
                     to="/middleware-demo"
-                    className="text-text-secondary hover:text-text-primary transition-colors"
+                    className="text-secondary hover:text-primary transition-colors"
                   >
                     Middleware Demo
                   </Link>
                   <Link
                     to="/performance-demo"
-                    className="text-text-secondary hover:text-text-primary transition-colors"
+                    className="text-secondary hover:text-primary transition-colors"
                   >
                     Performance Demo
                   </Link>

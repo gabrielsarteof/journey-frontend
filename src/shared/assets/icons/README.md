@@ -96,7 +96,7 @@ As cores são controladas via CSS:
 <HomeIcon className="text-secondary" />
 
 // Dark mode: cor ajusta automaticamente
-<HomeIcon className="text-text-secondary" />
+<HomeIcon className="text-secondary" />
 
 // Hover states
 <HomeIcon className="text-secondary hover:text-primary" />
