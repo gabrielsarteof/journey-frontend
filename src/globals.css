@@ -58,16 +58,21 @@
   }
 
   /* Classes que precisam reagir ao tema */
-  .text-text-primary {
+  .text-primary {
     color: var(--color-text-primary);
   }
 
-  .text-text-secondary {
+  .text-secondary {
     color: var(--color-text-secondary);
   }
 
-  .text-text-button-secondary {
+  .text-button-secondary {
     color: var(--color-text-button-secondary);
+  }
+
+  /* Cor da marca/brand do projeto */
+  .text-brand {
+    color: var(--color-primary);
   }
 
   /* Classes de cores de gamificação */
