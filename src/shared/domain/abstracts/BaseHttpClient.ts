@@ -7,6 +7,7 @@ export interface HttpRequestConfig {
   timeout?: number;
   retries?: number;
   cache?: boolean;
+  _isRetry?: boolean;
 }
 
 export interface HttpResponse<T = any> {
