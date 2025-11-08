@@ -79,7 +79,7 @@ export function Button({
   // Classes de variantes (cores e estilos básicos)
   const variantClasses = {
     primary: 'bg-primary-button text-primary-button hover:bg-primary-button-hover transition-colors shadow-button-primary',
-    secondary: 'bg-surface border-2 border-border-secondary text-button-secondaryhover:bg-surface-hover transition-colors shadow-button-secondary',
+    secondary: 'bg-surface border-2 border-border-secondary text-button-secondary hover:bg-surface-hover transition-colors shadow-button-secondary',
     ghost: 'bg-transparent text-secondary hover:bg-surface-elevated active:bg-surface transition-colors',
     danger: 'bg-error text-white hover:bg-error-alt transition-colors shadow-button-primary'
   };

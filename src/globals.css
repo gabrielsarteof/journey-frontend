@@ -20,6 +20,66 @@
 }
 
 @layer utilities {
+  /* Speech bubble com seta para cima (apontando para cima) */
+  .speech-bubble {
+    position: relative;
+  }
+
+  /* Seta principal (preenchimento) usando técnica de border triangle */
+  .speech-bubble::before {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    margin-left: calc(var(--arrow-size) * -1);
+    border: var(--arrow-size) solid transparent;
+    border-bottom-color: var(--bg-color);
+    border-top: 0;
+  }
+
+  /* Seta de borda (para dropdowns com border-2) usando técnica de border triangle */
+  .speech-bubble.border-2::after {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    margin-left: calc(var(--arrow-size) * -1 - 2px);
+    border: calc(var(--arrow-size) + 2px) solid transparent;
+    border-bottom-color: var(--border-color);
+    border-top: 0;
+    z-index: -1;
+  }
+
+  /* Speech bubble com seta para baixo (apontando para baixo) */
+  .speech-bubble-bottom {
+    position: relative;
+  }
+
+  /* Seta principal (preenchimento) usando técnica de border triangle - apontando para baixo */
+  .speech-bubble-bottom::before {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: calc(var(--arrow-size) * -1);
+    border: var(--arrow-size) solid transparent;
+    border-top-color: var(--bg-color);
+    border-bottom: 0;
+  }
+
+  /* Seta de borda (para elementos com border-2) apontando para baixo */
+  .speech-bubble-bottom.border-2::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: calc(var(--arrow-size) * -1 - 2px);
+    border: calc(var(--arrow-size) + 2px) solid transparent;
+    border-top-color: var(--border-color);
+    border-bottom: 0;
+    z-index: -1;
+  }
+
   .scrollbar-journeyBlack {
     scrollbar-width: thin;
     scrollbar-color: var(--color-journeyBlack) transparent;
@@ -300,7 +360,7 @@
   --base-text-secondary: #52656d;
   --base-border-light: #dddddd;
   --base-text-button-secondary: #0f0f0f;
-  --base-border-secondary: #c7c4bf;
+  --base-border-secondary: #e5e5e5;
   --base-primary-button-bg: #0f0f0f;
   --base-primary-button-hover: #333333;
   --base-primary-button-text: #ffffff;
@@ -525,31 +585,25 @@
 /* Classes de módulos - fora do @layer para garantir aplicação */
 .module-backend {
   background-color: var(--color-module-backend);
-  box-shadow: 0 8px 0 var(--color-module-backend-shadow);
 }
 
 .module-frontend {
   background-color: var(--color-module-frontend);
-  box-shadow: 0 8px 0 var(--color-module-frontend-shadow);
 }
 
 .module-devops {
   background-color: var(--color-module-devops);
-  box-shadow: 0 8px 0 var(--color-module-devops-shadow);
 }
 
 .module-mobile {
   background-color: var(--color-module-mobile);
-  box-shadow: 0 8px 0 var(--color-module-mobile-shadow);
 }
 
 .module-data {
   background-color: var(--color-module-data);
-  box-shadow: 0 8px 0 var(--color-module-data-shadow);
 }
 
 .module-active {
-  box-shadow: none !important;
   transform: translateY(8px);
 }
 
