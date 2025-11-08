@@ -1,9 +1,10 @@
+import { Link } from '@tanstack/react-router'
 import { UserStats } from './UserStats'
 import { QuestsWidget } from './QuestsWidget'
 
 export function DashboardRightSidebar() {
   return (
-    <aside className="hidden lg:flex border-l border-border-secondary flex-col bg-surface w-96 px-6 transition-colors">
+    <aside className="hidden lg:flex flex-col bg-surface w-96 px-6 transition-colors">
       <div className="flex py-8 gap-8 sticky top-0 flex-col w-full">
         {/* UserStats - visible only on desktop (mobile has it in header) */}
         <div className="w-full flex justify-between">
@@ -11,9 +12,9 @@ export function DashboardRightSidebar() {
         </div>
 
         {/* Daily Quests - visible only on desktop */}
-        <div className="rounded-2xl border-2 border-border-secondary bg-surface-elevated overflow-hidden transition-colors">
-          <div className="px-6 py-4 border-b-2 border-border-secondary transition-colors">
-            <h3 className="text-auth-heading font-bold text-xl transition-colors">Missões do dia</h3>
+        <div className="rounded-2xl border-2 border-border-secondary overflow-hidden transition-colors">
+          <div className="px-6 py-4 transition-colors">
+            <h3 className="text-auth-heading font-bold text-2xl transition-colors">Missões do dia</h3>
           </div>
           <div className="px-6 py-6">
             <QuestsWidget />
@@ -33,6 +34,16 @@ export function DashboardRightSidebar() {
           <p className="text-secondary text-sm transition-colors">
             Complete mais 10 lições pra começar a competir.
           </p>
+        </div>
+
+        {/* Credits Link */}
+        <div className="mt-auto pt-4 text-center">
+          <Link
+            to="/credits"
+            className="text-xs text-muted hover:text-muted-foreground transition-colors"
+          >
+            Credits & Attributions
+          </Link>
         </div>
       </div>
     </aside>

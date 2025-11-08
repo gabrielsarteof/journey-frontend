@@ -4,6 +4,9 @@ import { DashboardRightSidebar } from '../components/DashboardRightSidebar'
 import { DashboardFooter } from '../components/DashboardFooter'
 import { UserStats } from '../components/UserStats'
 import { useAuthRedirect } from '@/features/auth/presentation/hooks/useAuthRedirect'
+import { useAuthRefresh } from '@/features/auth/presentation/hooks/useAuthRefresh'
+import { useActivityMonitor } from '@/features/auth/presentation/hooks/useActivityMonitor'
+import { TokenRefreshIndicator } from '@/features/auth/presentation/components/TokenRefreshIndicator'
 
 interface DashboardLayoutProps {
   children: ReactNode
@@ -11,6 +14,8 @@ interface DashboardLayoutProps {
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
   useAuthRedirect()
+  useAuthRefresh()
+  const { getIdleTime } = useActivityMonitor()
 
   return (
     <div className="min-h-screen h-screen bg-background scrollbar-journeyBlack max-h-screen lg:grid lg:grid-cols-[auto_minmax(0,1fr)_auto] overflow-y-auto overscroll-none transition-colors">
@@ -24,16 +29,12 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       {/* Left Sidebar - visible only on desktop */}
       <DashboardLeftSidebar />
 
-      {/* Main Content */}
       <div className="flex flex-col lg:px-6 lg:items-end min-w-0 pt-16 pb-20 lg:pt-0 lg:pb-0">
         {children}
       </div>
-
-      {/* Right Sidebar - visible only on desktop */}
       <DashboardRightSidebar />
-
-      {/* Mobile Footer - visible only on mobile */}
       <DashboardFooter />
+      <TokenRefreshIndicator />
     </div>
   )
 }
