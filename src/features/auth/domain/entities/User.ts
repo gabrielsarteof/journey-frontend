@@ -217,4 +217,5 @@ export interface AuthState {
   isLoading: boolean
   error: string | null
   hasHydrated: boolean
+  tokenExpiresAt: number | null
 }
