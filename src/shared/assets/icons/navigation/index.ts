@@ -7,3 +7,10 @@ export { default as FlameIcon } from './flame.svg?react'
 export { default as GemIcon } from './gem.svg?react'
 export { default as HeartIcon } from './heart.svg?react'
 export { default as LockIcon } from './lock.svg?react'
+export { default as UserIcon } from './user.svg?react'
+
+// TODO: Adicionar os seguintes ícones SVG na pasta navigation:
+// - chart.svg (para página PROGRESSO)
+// - users.svg (para página EQUIPE)
+export { default as SocialIcon } from './social.svg?react'
+export { default as MedalIcon } from './medal.svg?react'
