@@ -24,7 +24,7 @@ export function useModules(): UseModulesReturn {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<Error | null>(null)
 
-  const { tokens, isAuthenticated } = useAuthStore()
+  const { tokens, isAuthenticated, hasHydrated } = useAuthStore()
 
   const repository = useMemo(() => {
     const service = new ModuleService(httpClient)
@@ -32,9 +32,14 @@ export function useModules(): UseModulesReturn {
   }, [])
 
   const fetchModules = async () => {
+    if (!hasHydrated) {
+      return
+    }
+
     if (!isAuthenticated || !tokens?.accessToken) {
       setError(new Error('Autenticação inválida. Token não disponível.'))
       setIsLoading(false)
+      window.location.href = '/auth/login'
       return
     }
 
@@ -52,8 +57,11 @@ export function useModules(): UseModulesReturn {
   }
 
   useEffect(() => {
-    fetchModules()
-  }, [isAuthenticated, tokens?.accessToken])
+    // Só executa se já hidratou
+    if (hasHydrated) {
+      fetchModules()
+    }
+  }, [hasHydrated, isAuthenticated, tokens?.accessToken])
 
   return {
     modules,

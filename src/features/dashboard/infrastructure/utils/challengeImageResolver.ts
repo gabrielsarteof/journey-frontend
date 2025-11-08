@@ -1,5 +1,4 @@
-import { PlanetAssetCatalog, type PlanetName } from '../repositories/PlanetAssetCatalog'
-import type { PlanetAsset } from '../../domain/value-objects/PlanetAsset'
+import { PlanetAssetCatalog, type AssetId } from '../repositories/PlanetAssetCatalog'
 
 export interface ChallengeVisuals {
   image: string
@@ -7,39 +6,28 @@ export interface ChallengeVisuals {
   altText: string
 }
 
-export interface ChallengeWithPlanetImage {
-  planetImage?: string
+export interface ChallengeWithAsset {
+  assetId?: string | null
   visualTheme?: {
     color?: string
   }
   title: string
 }
 
-export function resolvePlanetImage(challenge: ChallengeWithPlanetImage): string {
-  if (!challenge.planetImage) {
-    console.warn(`No planetImage for challenge: ${challenge.title}, using fallback`)
-    return PlanetAssetCatalog.getAsset('unknown', 1).path
+export function resolvePlanetImage(challenge: ChallengeWithAsset): string {
+  if (!challenge.assetId) {
+    console.warn(`No assetId for challenge: ${challenge.title}, using fallback`)
+    return PlanetAssetCatalog.getAsset('planet-01').path
   }
 
-  const planetName = challenge.planetImage
-    .replace('.png', '')
-    .replace('.jpg', '')
-    .replace('-01', '')
-    .replace('-02', '')
-    .replace('-03', '')
-    .replace('-04', '') as PlanetName
-
-  const variantMatch = challenge.planetImage.match(/-0?(\d)/)
-  const variant = variantMatch ? parseInt(variantMatch[1], 10) : undefined
-
-  return PlanetAssetCatalog.getAsset(planetName, variant).path
+  return PlanetAssetCatalog.getAsset(challenge.assetId as AssetId).path
 }
 
-export function resolvePlanetColor(challenge: ChallengeWithPlanetImage): string | undefined {
+export function resolvePlanetColor(challenge: ChallengeWithAsset): string | undefined {
   return challenge.visualTheme?.color
 }
 
-export function getChallengeVisuals(challenge: ChallengeWithPlanetImage): ChallengeVisuals {
+export function getChallengeVisuals(challenge: ChallengeWithAsset): ChallengeVisuals {
   const image = resolvePlanetImage(challenge)
   const color = resolvePlanetColor(challenge)
 

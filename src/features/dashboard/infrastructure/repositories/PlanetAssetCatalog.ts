@@ -1,63 +1,70 @@
-import { PlanetAsset } from '../../domain/value-objects/PlanetAsset'
-
 /**
  * PlanetAssetCatalog (Infrastructure Layer)
  *
- * Catálogo centralizado de assets de planetas.
+ * Catálogo centralizado de assets de planetas usando IDs abstratos.
  * Implementa padrões:
  * - Repository Pattern: Abstrai acesso aos assets
  * - Singleton Pattern: Instância única do catálogo
  * - Registry Pattern: Registro centralizado de recursos
+ * - Design Tokens Pattern: Nomes abstratos desacoplados do conteúdo
  *
  * Benefícios:
+ * - Flexibilidade total para trocar imagens sem refatoração
+ * - IDs abstratos não acoplam ao conteúdo visual
+ * - Metadata descritiva separada dos identificadores
  * - Type-safe asset management
  * - Centralização de imports
  * - Fácil manutenção e atualização
- * - Lazy loading de assets
- * - Cache de assets carregados
  */
 
-// Imports de assets - centralizados em um único lugar
-import earthPlanet from '@/shared/assets/planets/planet-earth.png'
-import mercuryPlanet01 from '@/shared/assets/planets/planet-mercury-01.png'
-import mercuryPlanet02 from '@/shared/assets/planets/planet-mercury-02.png'
-import marsPlanet01 from '@/shared/assets/planets/planet-mars-01.png'
-import marsPlanet02 from '@/shared/assets/planets/planet-mars-02.png'
-import moonPlanet from '@/shared/assets/planets/planet-moon.png'
-import unknownPlanet01 from '@/shared/assets/planets/planet-unknown-01.png'
-import unknownPlanet02 from '@/shared/assets/planets/planet-unknown-02.png'
-import unknownPlanet03 from '@/shared/assets/planets/planet-unknown-03.png'
-import unknownPlanet04 from '@/shared/assets/planets/planet-unknown-04.png'
+/**
+ * Tipo para identificação abstrata de assets
+ * IDs numéricos não vinculados ao conteúdo visual
+ */
+export type AssetId =
+  | 'planet-01'
+  | 'planet-02'
+  | 'planet-03'
+  | 'planet-04'
+  | 'planet-05'
+  | 'planet-06'
+  | 'planet-07'
+  | 'planet-08'
+  | 'planet-09'
+  | 'planet-10'
+
+import { PlanetAsset } from '../../domain/value-objects/PlanetAsset'
+import planet01 from '@/shared/assets/planets/planet-01.png'
+import planet02 from '@/shared/assets/planets/planet-02.png'
+import planet03 from '@/shared/assets/planets/planet-03.png'
+import planet04 from '@/shared/assets/planets/planet-04.png'
+import planet05 from '@/shared/assets/planets/planet-05.png'
+import planet06 from '@/shared/assets/planets/planet-06.png'
+import planet07 from '@/shared/assets/planets/planet-07.png'
+import planet08 from '@/shared/assets/planets/planet-08.png'
+import planet09 from '@/shared/assets/planets/planet-09.png'
+import planet10 from '@/shared/assets/planets/planet-10.png'
 import astronaut from '@/shared/assets/planets/astronaut.png'
 
 /**
- * Tipo para identificação de planetas
+ * Metadata descritiva para cada asset
+ * Separada do identificador para máxima flexibilidade
  */
-export type PlanetName =
-  | 'earth'
-  | 'mercury'
-  | 'mars'
-  | 'moon'
-  | 'venus'
-  | 'jupiter'
-  | 'saturn'
-  | 'uranus'
-  | 'neptune'
-  | 'pluto'
-  | 'titan'
-  | 'io'
-  | 'europa'
-  | 'ganymede'
-  | 'unknown'
+interface AssetMetadata {
+  description: string
+  tags: string[]
+  suggestedFor?: 'beginner' | 'intermediate' | 'advanced'
+}
 
 /**
  * Interface do catálogo
  */
 export interface IPlanetAssetCatalog {
-  getAsset(planetName: PlanetName, variant?: number): PlanetAsset
+  getAsset(assetId: AssetId): PlanetAsset
   getAllAssets(): PlanetAsset[]
   getRandomAsset(): PlanetAsset
-  hasAsset(planetName: PlanetName, variant?: number): boolean
+  hasAsset(assetId: AssetId): boolean
+  getMetadata(assetId: AssetId): AssetMetadata | undefined
 }
 
 /**
@@ -65,16 +72,15 @@ export interface IPlanetAssetCatalog {
  */
 class PlanetAssetCatalogImpl implements IPlanetAssetCatalog {
   private static instance: PlanetAssetCatalogImpl
-  private readonly assetRegistry: Map<string, PlanetAsset>
+  private readonly assetRegistry: Map<AssetId, PlanetAsset>
+  private readonly metadataRegistry: Map<AssetId, AssetMetadata>
 
   private constructor() {
     this.assetRegistry = new Map()
+    this.metadataRegistry = new Map()
     this.initializeAssets()
   }
 
-  /**
-   * Singleton instance
-   */
   static getInstance(): PlanetAssetCatalogImpl {
     if (!PlanetAssetCatalogImpl.instance) {
       PlanetAssetCatalogImpl.instance = new PlanetAssetCatalogImpl()
@@ -82,137 +88,133 @@ class PlanetAssetCatalogImpl implements IPlanetAssetCatalog {
     return PlanetAssetCatalogImpl.instance
   }
 
-  /**
-   * Inicializa o registro de assets
-   * Princípio: DRY - Definir assets uma vez
-   */
   private initializeAssets(): void {
-    // Earth
-    this.registerAsset('earth', earthPlanet, undefined, 'Planet Earth - Start of the journey')
+    this.registerAsset('planet-01', planet01, {
+      description: 'Small red rocky planet',
+      tags: ['red', 'small', 'rocky'],
+      suggestedFor: 'beginner'
+    })
 
-    // Mercury
-    this.registerAsset('mercury', mercuryPlanet01, 1)
-    this.registerAsset('mercury', mercuryPlanet02, 2)
+    this.registerAsset('planet-02', planet02, {
+      description: 'Red planet with craters',
+      tags: ['red', 'craters', 'medium'],
+      suggestedFor: 'beginner'
+    })
 
-    // Mars
-    this.registerAsset('mars', marsPlanet01, 1)
-    this.registerAsset('mars', marsPlanet02, 2)
+    this.registerAsset('planet-03', planet03, {
+      description: 'Large red planet',
+      tags: ['red', 'large'],
+      suggestedFor: 'intermediate'
+    })
 
-    // Moon
-    this.registerAsset('moon', moonPlanet)
+    this.registerAsset('planet-04', planet04, {
+      description: 'Small gray moon',
+      tags: ['gray', 'small', 'moon'],
+      suggestedFor: 'beginner'
+    })
 
-    // Unknown planets (a serem identificados)
-    this.registerAsset('unknown', unknownPlanet01, 1)
-    this.registerAsset('unknown', unknownPlanet02, 2)
-    this.registerAsset('unknown', unknownPlanet03, 3)
-    this.registerAsset('unknown', unknownPlanet04, 4)
+    this.registerAsset('planet-05', planet05, {
+      description: 'Purple unknown planet',
+      tags: ['purple', 'mysterious'],
+      suggestedFor: 'intermediate'
+    })
 
-    // Pode adicionar mais planetas aqui:
-    // Venus, Jupiter, Saturn, Uranus, Neptune
+    this.registerAsset('planet-06', planet06, {
+      description: 'Blue gas planet',
+      tags: ['blue', 'gas-giant'],
+      suggestedFor: 'advanced'
+    })
+
+    this.registerAsset('planet-07', planet07, {
+      description: 'Orange planet',
+      tags: ['orange', 'medium'],
+      suggestedFor: 'intermediate'
+    })
+
+    this.registerAsset('planet-08', planet08, {
+      description: 'Green mysterious planet',
+      tags: ['green', 'mysterious'],
+      suggestedFor: 'advanced'
+    })
+
+    this.registerAsset('planet-09', planet09, {
+      description: 'Small purple planet',
+      tags: ['purple', 'small'],
+      suggestedFor: 'beginner'
+    })
+
+    this.registerAsset('planet-10', planet10, {
+      description: 'Large mysterious planet',
+      tags: ['mysterious', 'large'],
+      suggestedFor: 'advanced'
+    })
   }
 
-  /**
-   * Registra um asset no catálogo
-   */
   private registerAsset(
-    name: PlanetName,
+    id: AssetId,
     path: string,
-    variant?: number,
-    altText?: string
+    metadata: AssetMetadata
   ): void {
-    const key = this.generateKey(name, variant)
-    const asset = PlanetAsset.create({ name, path, variant, altText })
-    this.assetRegistry.set(key, asset)
+    const asset = PlanetAsset.create({
+      name: id,
+      path,
+      altText: metadata.description
+    })
+    this.assetRegistry.set(id, asset)
+    this.metadataRegistry.set(id, metadata)
   }
 
-  /**
-   * Gera chave única para o asset
-   */
-  private generateKey(planetName: PlanetName, variant?: number): string {
-    return variant ? `${planetName}-${variant}` : planetName
-  }
-
-  /**
-   * Obtém um asset específico
-   */
-  getAsset(planetName: PlanetName, variant?: number): PlanetAsset {
-    const key = this.generateKey(planetName, variant)
-    const asset = this.assetRegistry.get(key)
+  getAsset(assetId: AssetId): PlanetAsset {
+    const asset = this.assetRegistry.get(assetId)
 
     if (!asset) {
-      // Fallback para unknown planet se não encontrar
-      console.warn(`Asset not found for ${key}, using fallback`)
-      return this.assetRegistry.get('unknown-1') || this.createFallbackAsset()
+      console.warn(`Asset not found for ${assetId}, using fallback`)
+      return this.assetRegistry.get('planet-01') || this.createFallbackAsset()
     }
 
     return asset
   }
 
-  /**
-   * Verifica se um asset existe
-   */
-  hasAsset(planetName: PlanetName, variant?: number): boolean {
-    const key = this.generateKey(planetName, variant)
-    return this.assetRegistry.has(key)
+  hasAsset(assetId: AssetId): boolean {
+    return this.assetRegistry.has(assetId)
   }
 
-  /**
-   * Retorna todos os assets disponíveis
-   */
   getAllAssets(): PlanetAsset[] {
     return Array.from(this.assetRegistry.values())
   }
 
-  /**
-   * Retorna um asset aleatório
-   * Útil para variedade visual
-   */
   getRandomAsset(): PlanetAsset {
     const assets = this.getAllAssets()
     const randomIndex = Math.floor(Math.random() * assets.length)
     return assets[randomIndex]
   }
 
-  /**
-   * Obtém asset baseado em índice (para sequência de challenges)
-   * Distribui assets de forma determinística mas variada
-   */
+  getMetadata(assetId: AssetId): AssetMetadata | undefined {
+    return this.metadataRegistry.get(assetId)
+  }
+
   getAssetByIndex(index: number): PlanetAsset {
     const assets = this.getAllAssets()
     return assets[index % assets.length]
   }
 
-  /**
-   * Fallback asset em caso de erro
-   */
   private createFallbackAsset(): PlanetAsset {
     return PlanetAsset.create({
-      name: 'unknown',
-      path: unknownPlanet01,
-      variant: 1,
+      name: 'planet-01',
+      path: planet01,
       altText: 'Unknown Planet'
     })
   }
 
-  /**
-   * Obtém asset especial (como astronauta)
-   */
   getAstronautAsset(): string {
     return astronaut
   }
 }
 
-/**
- * Export da instância singleton
- * Uso: import { PlanetAssetCatalog } from '...'
- */
 export const PlanetAssetCatalog = PlanetAssetCatalogImpl.getInstance()
 
-/**
- * Hook para uso em componentes React (opcional)
- */
-export function usePlanetAsset(planetName: PlanetName, variant?: number): PlanetAsset {
-  return PlanetAssetCatalog.getAsset(planetName, variant)
+export function usePlanetAsset(assetId: AssetId): PlanetAsset {
+  return PlanetAssetCatalog.getAsset(assetId)
 }
 
 export function usePlanetAssetByIndex(index: number): PlanetAsset {
