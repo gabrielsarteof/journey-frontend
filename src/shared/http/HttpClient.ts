@@ -23,6 +23,7 @@ export interface HttpClientOptions {
   enableLogging?: boolean
   tokenProvider?: AuthTokenProvider
   enableTokenRefresh?: boolean
+  maxRefreshRetries?: number
 }
 
 export class HttpClient extends BaseHttpClient {
@@ -30,6 +31,7 @@ export class HttpClient extends BaseHttpClient {
   private readonly middlewareChain: MiddlewareChain
   private readonly options: HttpClientOptions
   private isRefreshing = false
+  private refreshRetries = 0
   private failedQueue: Array<{
     resolve: (value: unknown) => void
     reject: (reason?: unknown) => void
@@ -45,6 +47,7 @@ export class HttpClient extends BaseHttpClient {
     this.options = {
       enableLogging: import.meta.env.DEV,
       enableTokenRefresh: true,
+      maxRefreshRetries: 3,
       ...options
     }
 
@@ -177,12 +180,12 @@ export class HttpClient extends BaseHttpClient {
     }
   }
 
-  private processQueue(error: Error | null) {
-    this.failedQueue.forEach(promise => {
+  private processQueue(error: Error | null, token: string | null = null): void {
+    this.failedQueue.forEach((promise) => {
       if (error) {
         promise.reject(error)
       } else {
-        promise.resolve(null)
+        promise.resolve(token)
       }
     })
     this.failedQueue = []
@@ -196,67 +199,86 @@ export class HttpClient extends BaseHttpClient {
     return isNaN(seconds) ? undefined : seconds
   }
 
-  /**
-   * Intercepta HTTP 401 e executa refresh via POST /auth/refresh.
-   * Serializa requests concorrentes usando fila.
-   *
-   * @returns HttpResponse se refresh OK e retry bem-sucedido, null caso contrário
-   */
   private async handleUnauthorized<T>(
     method: string,
     url: string,
     config: HttpRequestConfig,
     data?: any
   ): Promise<HttpResponse<T> | null> {
-    // Bypass: /auth/refresh não deve triggerar novo refresh
+    const authStore = useAuthStore.getState()
+
     if (url.includes('/auth/refresh')) {
-      const authStore = useAuthStore.getState()
       authStore.setError('Sua sessão expirou. Por favor, faça login novamente.')
       await authStore.logout()
       return null
     }
 
-    // Já foi feito retry desta request? Força logout
     if (config._isRetry) {
-      const authStore = useAuthStore.getState()
-      authStore.setError('Sua sessão expirou. Por favor, faça login novamente.')
+      authStore.setError('Falha na autenticação após refresh. Por favor, faça login novamente.')
       await authStore.logout()
       return null
     }
 
-    // Enfileira se refresh já está em andamento
     if (this.isRefreshing) {
-      try {
-        await new Promise((resolve, reject) => {
-          this.failedQueue.push({ resolve, reject })
+      return new Promise<HttpResponse<T>>((resolve, reject) => {
+        this.failedQueue.push({
+          resolve: resolve as (value: any) => void,
+          reject
         })
-        // Retry após refresh completar
-        return await this.performRequest<T>(method, url, { ...config, _isRetry: true }, data)
-      } catch (error) {
-        return null
-      }
+      })
+        .then(() => {
+          const newConfig = {
+            ...config,
+            _isRetry: true,
+          }
+          return this.performRequest<T>(method, url, newConfig, data)
+        })
+        .catch((err) => {
+          throw err
+        })
+    }
+
+    const maxRefreshRetries = 2
+    if (this.refreshRetries >= maxRefreshRetries) {
+      this.refreshRetries = 0
+      authStore.setError('Múltiplas tentativas de renovação falharam. Por favor, faça login novamente.')
+      await authStore.logout()
+      return null
     }
 
     this.isRefreshing = true
+    this.refreshRetries++
 
     try {
-      // POST /auth/refresh
-      await useAuthStore.getState().refreshToken()
+      const originalToken = authStore.tokens?.accessToken
 
-      // Desbloqueia fila
-      this.processQueue(null)
+      console.log('[HttpClient] Iniciando refresh de token...')
+      await authStore.refreshToken()
 
-      // Retry request original com novo accessToken
-      return await this.performRequest<T>(method, url, { ...config, _isRetry: true }, data)
+      const newToken = authStore.tokens?.accessToken
+
+      if (!newToken || newToken === originalToken) {
+        throw new Error('Token refresh did not produce a new token')
+      }
+
+      console.log('[HttpClient] Processando fila de requisições pendentes')
+      this.processQueue(null, newToken)
+
+      this.refreshRetries = 0
+
+      const newConfig = {
+        ...config,
+        _isRetry: true,
+      }
+
+      return await this.performRequest<T>(method, url, newConfig, data)
     } catch (error) {
-      // Refresh falhou: limpa fila e força logout
-      this.processQueue(error instanceof Error ? error : new Error('Token refresh failed'))
+      console.error('[HttpClient] Falha no refresh de token:', error)
+      this.processQueue(error as Error, null)
 
-      const authStore = useAuthStore.getState()
-      authStore.setError('Sua sessão expirou. Por favor, faça login novamente.')
       await authStore.logout()
 
-      return null
+      throw error
     } finally {
       this.isRefreshing = false
     }
