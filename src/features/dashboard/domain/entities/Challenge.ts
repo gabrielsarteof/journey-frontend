@@ -2,6 +2,7 @@ import { PlanetAsset } from '../value-objects/PlanetAsset'
 import { ChallengeStatus } from '../value-objects/ChallengeStatus'
 import { ChallengeType } from '../value-objects/ChallengeType'
 import { DomainError } from '@/shared/domain/validation/ValueObject'
+import { type AssetId } from '../../infrastructure/repositories/PlanetAssetCatalog'
 
 /**
  * Challenge Entity (Aggregate Root)
@@ -19,6 +20,8 @@ import { DomainError } from '@/shared/domain/validation/ValueObject'
  * - LSP: Pode ser substituído por subclasses
  * - ISP: Interface mínima necessária
  * - DIP: Depende de abstrações (Value Objects)
+ *
+ * Refatoração: Usa AssetId abstrato ao invés de nome semântico
  */
 
 export interface ChallengeProps {
@@ -27,6 +30,7 @@ export interface ChallengeProps {
   type: ChallengeType
   status: ChallengeStatus
   planetAsset: PlanetAsset
+  assetId?: AssetId
   orderIndex?: number
   points?: number
   completedStars?: number
@@ -39,6 +43,7 @@ export class Challenge {
   private _type: ChallengeType
   private _status: ChallengeStatus
   private _planetAsset: PlanetAsset
+  private _assetId?: AssetId
   private _orderIndex: number
   private _points: number
   private _completedStars: number
@@ -50,6 +55,7 @@ export class Challenge {
     this._type = props.type
     this._status = props.status
     this._planetAsset = props.planetAsset
+    this._assetId = props.assetId
     this._orderIndex = props.orderIndex ?? 0
     this._points = props.points ?? 0
     this._completedStars = props.completedStars ?? 0
@@ -136,6 +142,10 @@ export class Challenge {
 
   get maxStars(): number {
     return this._maxStars
+  }
+
+  get assetId(): AssetId | undefined {
+    return this._assetId
   }
 
   /**
@@ -235,6 +245,7 @@ export class Challenge {
       type: this._type.getValue(),
       status: this._status.getValue(),
       planetAsset: this._planetAsset.toDTO(),
+      assetId: this._assetId,
       orderIndex: this._orderIndex,
       points: this._points,
       completedStars: this._completedStars,
@@ -252,6 +263,7 @@ export class Challenge {
       type: this._type,
       status: this._status,
       planetAsset: this._planetAsset,
+      assetId: this._assetId,
       orderIndex: this._orderIndex,
       points: this._points,
       completedStars: this._completedStars,
@@ -275,6 +287,7 @@ export interface ChallengeDTO {
     variant?: number
     altText?: string
   }
+  assetId?: AssetId
   orderIndex: number
   points: number
   completedStars: number

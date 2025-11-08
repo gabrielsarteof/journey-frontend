@@ -2,7 +2,7 @@ import { Challenge } from '../entities/Challenge'
 import { ChallengeType} from '../value-objects/ChallengeType'
 import { ChallengeStatus } from '../value-objects/ChallengeStatus'
 import { PlanetAsset } from '../value-objects/PlanetAsset'
-import { PlanetAssetCatalog } from '../../infrastructure/repositories/PlanetAssetCatalog'
+import { PlanetAssetCatalog, type AssetId } from '../../infrastructure/repositories/PlanetAssetCatalog'
 
 export interface ChallengeDTO {
   id: string
@@ -14,7 +14,7 @@ export interface ChallengeDTO {
   category: string
   estimatedMinutes: number
   languages: string[]
-  planetImage: string | null
+  assetId: string | null
   visualTheme?: {
     color?: string
     variant?: number
@@ -31,12 +31,15 @@ export interface ChallengeDTO {
 
 export class ChallengeMapper {
   static toDomain(dto: ChallengeDTO): Challenge {
+    const assetId = this.resolveAssetId(dto.assetId)
+
     return Challenge.create({
       id: dto.id,
       title: dto.title,
       type: this.mapType(dto.category, dto.difficulty),
       status: ChallengeStatus.create(dto.status),
-      planetAsset: this.resolvePlanetAsset(dto.planetImage, dto.visualTheme),
+      planetAsset: this.resolvePlanetAsset(assetId),
+      assetId: assetId,
       orderIndex: dto.orderInModule,
       points: dto.baseXp,
       completedStars: dto.completedStars,
@@ -48,7 +51,6 @@ export class ChallengeMapper {
     return dtos.map(dto => this.toDomain(dto))
   }
 
-  // Maps difficulty to ChallengeType: EASY->lesson, MEDIUM->practice, HARD->debug, EXPERT->refactor
   private static mapType(category: string, difficulty: string): ChallengeType {
     if (difficulty === 'EASY') return ChallengeType.lesson()
     if (difficulty === 'MEDIUM') return ChallengeType.practice()
@@ -57,25 +59,18 @@ export class ChallengeMapper {
     return ChallengeType.lesson()
   }
 
-  // Resolves planetImage: URL -> custom asset, filename -> local catalog, null -> unknown
-  private static resolvePlanetAsset(
-    planetImage: string | null,
-    visualTheme?: { color?: string; variant?: number }
-  ): PlanetAsset {
-    if (!planetImage) {
-      return PlanetAssetCatalog.getAsset('unknown', 1)
+  private static resolveAssetId(assetId: string | null): AssetId {
+    if (!assetId || !this.isValidAssetId(assetId)) {
+      return 'planet-01'
     }
+    return assetId as AssetId
+  }
 
-    if (planetImage.startsWith('http')) {
-      return PlanetAsset.create({
-        name: 'custom',
-        path: planetImage,
-        variant: visualTheme?.variant,
-        altText: 'Challenge planet',
-      })
-    }
+  private static isValidAssetId(assetId: string): boolean {
+    return /^planet-(0[1-9]|10)$/.test(assetId)
+  }
 
-    const planetName = planetImage.replace('.png', '').replace('.jpg', '')
-    return PlanetAssetCatalog.getAsset(planetName, visualTheme?.variant || 1)
+  private static resolvePlanetAsset(assetId: AssetId): PlanetAsset {
+    return PlanetAssetCatalog.getAsset(assetId)
   }
 }

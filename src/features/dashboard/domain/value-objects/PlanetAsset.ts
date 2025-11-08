@@ -8,12 +8,13 @@ import { ValueObject, DomainError } from '@/shared/domain/validation/ValueObject
  * - Imutável (ValueObject)
  * - Auto-validável
  * - Encapsula regras de negócio sobre assets
+ * - Usa IDs abstratos seguindo Design Tokens Pattern
  *
  * @example
  * const asset = PlanetAsset.create({
- *   name: 'mercury',
- *   path: '/planets/planet-mercury-01.png',
- *   variant: 1
+ *   name: 'planet-01',
+ *   path: '/planets/planet-01.png',
+ *   altText: 'Small red rocky planet'
  * })
  */
 
@@ -25,21 +26,6 @@ export interface PlanetAssetProps {
 }
 
 export class PlanetAsset extends ValueObject<PlanetAssetProps> {
-  private static readonly VALID_PLANET_NAMES = [
-    'mercury',
-    'venus',
-    'earth',
-    'mars',
-    'jupiter',
-    'saturn',
-    'uranus',
-    'neptune',
-    'moon',
-    'unknown'
-  ] as const
-
-  private static readonly SUPPORTED_FORMATS = ['.png', '.jpg', '.svg', '.webp'] as const
-
   private constructor(props: PlanetAssetProps) {
     super(props)
   }
@@ -55,33 +41,28 @@ export class PlanetAsset extends ValueObject<PlanetAssetProps> {
   /**
    * Validação de invariantes do domínio
    * Princípio: Fail Fast - valida na criação
+   *
+   * Aceita IDs abstratos (planet-01, planet-02, etc.) seguindo Design Tokens Pattern
    */
   protected validate(): void {
     const { name, path, variant } = this.value
 
     if (!name || name.trim().length === 0) {
-      throw new DomainError('Planet name is required', 'planetAsset.name', 'REQUIRED')
+      throw new DomainError('Asset ID is required', 'planetAsset.name', 'REQUIRED')
     }
 
-    if (!PlanetAsset.VALID_PLANET_NAMES.includes(name.toLowerCase() as any)) {
+    // Valida formato de ID abstrato: planet-01 até planet-10
+    const validAssetIdPattern = /^planet-(0[1-9]|10)$/
+    if (!validAssetIdPattern.test(name)) {
       throw new DomainError(
-        `Invalid planet name: ${name}. Must be one of: ${PlanetAsset.VALID_PLANET_NAMES.join(', ')}`,
+        `Invalid asset ID: ${name}. Must match pattern: planet-01 to planet-10`,
         'planetAsset.name',
-        'INVALID_PLANET'
+        'INVALID_ASSET_ID'
       )
     }
 
     if (!path || path.trim().length === 0) {
       throw new DomainError('Asset path is required', 'planetAsset.path', 'REQUIRED')
-    }
-
-    const hasValidFormat = PlanetAsset.SUPPORTED_FORMATS.some(format => path.endsWith(format))
-    if (!hasValidFormat) {
-      throw new DomainError(
-        `Unsupported asset format. Supported: ${PlanetAsset.SUPPORTED_FORMATS.join(', ')}`,
-        'planetAsset.path',
-        'INVALID_FORMAT'
-      )
     }
 
     if (variant !== undefined && (variant < 1 || variant > 99)) {
@@ -117,9 +98,10 @@ export class PlanetAsset extends ValueObject<PlanetAssetProps> {
    * Domain logic - comportamento relacionado ao asset
    */
   private generateDefaultAltText(): string {
-    const planetName = this.value.name.charAt(0).toUpperCase() + this.value.name.slice(1)
+    // Para IDs abstratos, usa o próprio ID como base
+    const assetId = this.value.name.toUpperCase()
     const variantText = this.value.variant ? ` - Variant ${this.value.variant}` : ''
-    return `${planetName} Planet${variantText}`
+    return `${assetId}${variantText}`
   }
 
   /**
@@ -146,9 +128,9 @@ export class PlanetAsset extends ValueObject<PlanetAssetProps> {
   }
 
   /**
-   * Type guard para type safety
+   * Type guard para verificar se é um asset específico
    */
-  isPlanet(planetName: typeof PlanetAsset.VALID_PLANET_NAMES[number]): boolean {
-    return this.value.name.toLowerCase() === planetName
+  isAssetId(assetId: string): boolean {
+    return this.value.name === assetId
   }
 }
