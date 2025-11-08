@@ -60,12 +60,10 @@ export function LandingPage({ heroImage }: LandingPageProps) {
           {/* Brand Section */}
           <div className="flex flex-col items-center justify-center text-center">
             <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
-              <ThemedImage
-                lightSrc="/brand/journey-logo-light.svg"
-                darkSrc="/brand/journey-logo-dark.svg"
+              <img
+                src="/brand/journey-logo.svg"
                 alt="Journey Logo"
                 className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24"
-                priority={true}
               />
               <ThemedImage
                 lightSrc="/brand/journey-text-light.svg"
