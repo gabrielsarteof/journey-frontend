@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as PerformanceDemoRouteImport } from './routes/performance-demo'
 import { Route as MiddlewareDemoRouteImport } from './routes/middleware-demo'
 import { Route as DemoRouteImport } from './routes/demo'
+import { Route as CreditsRouteImport } from './routes/credits'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthRegisterRouteImport } from './routes/auth/register'
@@ -31,6 +32,11 @@ const MiddlewareDemoRoute = MiddlewareDemoRouteImport.update({
 const DemoRoute = DemoRouteImport.update({
   id: '/demo',
   path: '/demo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CreditsRoute = CreditsRouteImport.update({
+  id: '/credits',
+  path: '/credits',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
@@ -60,6 +66,7 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/credits': typeof CreditsRoute
   '/demo': typeof DemoRoute
   '/middleware-demo': typeof MiddlewareDemoRoute
   '/performance-demo': typeof PerformanceDemoRoute
@@ -69,6 +76,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/credits': typeof CreditsRoute
   '/demo': typeof DemoRoute
   '/middleware-demo': typeof MiddlewareDemoRoute
   '/performance-demo': typeof PerformanceDemoRoute
@@ -80,6 +88,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/credits': typeof CreditsRoute
   '/demo': typeof DemoRoute
   '/middleware-demo': typeof MiddlewareDemoRoute
   '/performance-demo': typeof PerformanceDemoRoute
@@ -91,6 +100,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/credits'
     | '/demo'
     | '/middleware-demo'
     | '/performance-demo'
@@ -100,6 +110,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/credits'
     | '/demo'
     | '/middleware-demo'
     | '/performance-demo'
@@ -110,6 +121,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/credits'
     | '/demo'
     | '/middleware-demo'
     | '/performance-demo'
@@ -121,6 +133,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  CreditsRoute: typeof CreditsRoute
   DemoRoute: typeof DemoRoute
   MiddlewareDemoRoute: typeof MiddlewareDemoRoute
   PerformanceDemoRoute: typeof PerformanceDemoRoute
@@ -149,6 +162,13 @@ declare module '@tanstack/react-router' {
       path: '/demo'
       fullPath: '/demo'
       preLoaderRoute: typeof DemoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/credits': {
+      id: '/credits'
+      path: '/credits'
+      fullPath: '/credits'
+      preLoaderRoute: typeof CreditsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -204,6 +224,7 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  CreditsRoute: CreditsRoute,
   DemoRoute: DemoRoute,
   MiddlewareDemoRoute: MiddlewareDemoRoute,
   PerformanceDemoRoute: PerformanceDemoRoute,

@@ -7,36 +7,32 @@ interface IconCredit {
   authorUrl?: string
 }
 
+// Example data - Replace with actual icon credits when adding new icons
 const navigationIcons: IconCredit[] = [
-  { name: 'Home Icon', filename: 'home.svg', author: 'Author Name' },
-  { name: 'User Icon', filename: 'user.svg', author: 'Author Name' },
-  { name: 'Menu Icon', filename: 'menu.svg', author: 'Author Name' },
-  { name: 'Target Icon', filename: 'target.svg', author: 'Author Name' },
-  { name: 'Flag Icon', filename: 'flag.svg', author: 'Author Name' },
-  { name: 'Trophy Icon', filename: 'trophy.svg', author: 'Author Name' },
-  { name: 'Heart Icon', filename: 'heart.svg', author: 'Author Name' },
-  { name: 'Flame Icon', filename: 'flame.svg', author: 'Author Name' },
-  { name: 'Gem Icon', filename: 'gem.svg', author: 'Author Name' },
-  { name: 'Lock Icon', filename: 'lock.svg', author: 'Author Name' },
-  { name: 'Physics Icon', filename: 'physics.svg', author: 'Author Name' },
+  {
+    name: 'Example Navigation Icon',
+    filename: 'example-icon.svg',
+    author: 'Author Name',
+    authorUrl: 'https://www.flaticon.com/authors/author-name'
+  },
 ]
 
 const sidebarIcons: IconCredit[] = [
-  { name: 'House Icon', filename: 'house.png', author: 'Author Name' },
-  { name: 'Helmet Icon', filename: 'helmet.png', author: 'Author Name' },
-  { name: 'Trophy Icon', filename: 'trophy.png', author: 'Author Name' },
-  { name: 'Flag Icon', filename: 'flag.png', author: 'Author Name' },
-  { name: 'Target Icon', filename: 'target.png', author: 'Author Name' },
-  { name: 'Menu Icon', filename: 'menu.png', author: 'Author Name' },
+  {
+    name: 'Example Sidebar Icon',
+    filename: 'example-sidebar.png',
+    author: 'Author Name',
+    authorUrl: 'https://www.flaticon.com/authors/author-name'
+  },
 ]
 
 const moduleIcons: IconCredit[] = [
-  { name: 'Frontend Icon', filename: 'frontend.svg', author: 'Author Name' },
-  { name: 'Backend Icon', filename: 'backend.svg', author: 'Author Name' },
-  { name: 'Mobile Icon', filename: 'mobile.svg', author: 'Author Name' },
-  { name: 'DevOps Icon', filename: 'devops.svg', author: 'Author Name' },
-  { name: 'Data Icon', filename: 'data.svg', author: 'Author Name' },
-  { name: 'Fullstack Icon', filename: 'fullstack.svg', author: 'Author Name' },
+  {
+    name: 'Example Module Icon',
+    filename: 'example-module.svg',
+    author: 'Author Name',
+    authorUrl: 'https://www.flaticon.com/authors/author-name'
+  },
 ]
 
 export function CreditsPage() {
@@ -48,7 +44,7 @@ export function CreditsPage() {
             to="/"
             className="inline-flex items-center text-primary hover:text-primary/80 transition-colors mb-6"
           >
-            <span className="mr-2">←</span> Voltar
+            <span className="mr-2">←</span> Back
           </Link>
           <h1 className="text-4xl font-bold text-foreground mb-4">Credits</h1>
           <p className="text-muted text-lg">
