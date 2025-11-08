@@ -1,10 +1,10 @@
 import { Link, useLocation } from '@tanstack/react-router'
 import {
   HomeIcon,
-  TargetIcon,
-  FlagIcon,
+  SocialIcon,
+  MedalIcon,
   TrophyIcon,
-  MenuIcon
+  UserIcon
 } from '@/shared/assets/icons'
 
 interface NavigationButtonsProps {
@@ -16,10 +16,10 @@ export function NavigationButtons({ variant = 'desktop' }: NavigationButtonsProp
 
   const navItems = [
     { path: '/dashboard', icon: HomeIcon, label: 'APRENDER' },
-    { path: '/metrics', icon: TargetIcon, label: 'MÉTRICAS' },
-    { path: '/quests', icon: FlagIcon, label: 'MISSÕES' },
-    { path: '/certificates', icon: TrophyIcon, label: 'CERTIFICADOS' },
-    { path: '/profile', icon: MenuIcon, label: 'CONFIGURAÇÕES' },
+    { path: '/progress', icon: MedalIcon, label: 'PROGRESSO' },
+    { path: '/team', icon: SocialIcon, label: 'EQUIPE' },
+    { path: '/leaderboards', icon: TrophyIcon, label: 'RANKINGS' },
+    { path: '/profile', icon: UserIcon, label: 'PERFIL' },
   ]
 
   if (variant === 'mobile') {
@@ -65,7 +65,7 @@ export function NavigationButtons({ variant = 'desktop' }: NavigationButtonsProp
               }
             `}
           >
-            <Icon className={`w-auto h-6 transition-colors ${isActive ? 'text-primary' : 'text-primary'}`} />
+            <Icon className={`w-auto h-8 transition-colors`} />
             <p className={`text-sm font-bold uppercase tracking-wide transition-colors ${isActive ? 'text-primary' : 'text-primary'}`}>
               {item.label}
             </p>
