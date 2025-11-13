@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { DashboardLayout } from '../layouts/DashboardLayout'
 import { UnitBanner } from '../components/UnitBanner'
 import { UnitPath } from '../components/UnitPath'
+import { StickyUnitHeader } from '../components/StickyUnitHeader'
 
 // Dados mockados estáticos
 const mockUnits = [
@@ -47,12 +48,67 @@ const mockUnits = [
 
 export function DashboardPage() {
   const [currentUnit] = useState(mockUnits[0])
+  const [visibleUnit, setVisibleUnit] = useState(mockUnits[0])
+  const [showStickyHeader, setShowStickyHeader] = useState(false)
+  const unitRefs = useRef<(HTMLDivElement | null)[]>([])
+  const bannerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const observerOptions = {
+      root: null,
+      rootMargin: '-80px 0px -60% 0px', // Detecta quando está próximo ao topo
+      threshold: 0,
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const unitIndex = unitRefs.current.indexOf(entry.target as HTMLDivElement)
+          if (unitIndex !== -1) {
+            setVisibleUnit(mockUnits[unitIndex])
+          }
+        }
+      })
+    }, observerOptions)
+
+    // Observa cada unidade
+    unitRefs.current.forEach((ref) => {
+      if (ref) observer.observe(ref)
+    })
+
+    // Observer para o banner (para mostrar/esconder o sticky header)
+    const bannerObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          setShowStickyHeader(!entry.isIntersecting)
+        })
+      },
+      { threshold: 0 }
+    )
+
+    if (bannerRef.current) {
+      bannerObserver.observe(bannerRef.current)
+    }
+
+    return () => {
+      observer.disconnect()
+      bannerObserver.disconnect()
+    }
+  }, [])
 
   return (
     <DashboardLayout>
+      {/* Header Sticky */}
+      <StickyUnitHeader
+        unitNumber={visibleUnit.orderIndex}
+        title={visibleUnit.title}
+        color={visibleUnit.color}
+        isVisible={showStickyHeader}
+      />
+
       <div className="w-full h-full pb-20 lg:pb-0 bg-duoBackground overflow-y-auto">
         {/* Banner da unidade atual */}
-        <div className="w-full flex justify-center py-6">
+        <div ref={bannerRef} className="w-full flex justify-center py-6">
           <UnitBanner
             unitNumber={currentUnit.orderIndex}
             title={currentUnit.title}
@@ -63,14 +119,18 @@ export function DashboardPage() {
         {/* Caminho de unidades e lições */}
         <div className="w-full flex flex-col items-center">
           {mockUnits.map((unit, index) => (
-            <UnitPath
+            <div
               key={unit.id}
-              unitNumber={unit.orderIndex}
-              title={unit.title}
-              color={unit.color}
-              lessons={unit.lessons}
-              showBreak={index > 0}
-            />
+              ref={(el) => (unitRefs.current[index] = el)}
+            >
+              <UnitPath
+                unitNumber={unit.orderIndex}
+                title={unit.title}
+                color={unit.color}
+                lessons={unit.lessons}
+                showBreak={index > 0}
+              />
+            </div>
           ))}
         </div>
 
