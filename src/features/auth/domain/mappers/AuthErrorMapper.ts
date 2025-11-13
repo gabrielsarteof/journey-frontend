@@ -219,11 +219,11 @@ export class AuthErrorMapper {
    */
   private static translateValidationMessage(message: string, field: string): string {
     const translationMap: Record<string, string> = {
-      'required': 'Campo obrigatório',
-      'invalid_type': 'Tipo de dado inválido',
-      'too_small': 'Valor muito pequeno',
-      'too_big': 'Valor muito grande',
-      'invalid_string': 'Formato inválido',
+      'required': 'Este campo é obrigatório',
+      'invalid_type': 'Ops, tipo de dado inválido',
+      'too_small': 'Esse valor está muito pequeno',
+      'too_big': 'Esse valor está muito grande',
+      'invalid_string': 'Hmm, formato inválido',
       'invalid_email': 'Email inválido',
     };
 

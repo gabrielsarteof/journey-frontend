@@ -1,0 +1,6 @@
+export { default as BackendIcon } from './backend.svg?react'
+export { default as FrontendIcon } from './frontend.svg?react'
+export { default as DevOpsIcon } from './devops.svg?react'
+export { default as MobileIcon } from './mobile.svg?react'
+export { default as DataIcon } from './data.svg?react'
+export { default as FullStackIcon } from './fullstack.svg?react'

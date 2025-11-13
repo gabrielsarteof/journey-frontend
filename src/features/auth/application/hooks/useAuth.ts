@@ -11,30 +11,28 @@ export const useAuth = () => {
     isAuthenticated,
     isLoading,
     error,
+    login: storeLogin,
+    register: storeRegister,
     logout,
     getCurrentUser,
     setError,
     clearError,
   } = useAuthStore()
 
-  const { loginWithCache, registerWithValidation, getCachedUser } = useAuthWithCache()
+  const { getCachedUser } = useAuthWithCache()
 
-  // Validação local sem async checks para feedback em tempo real
   const validateFormData = async (data: LoginDTO | RegisterDTO) => {
     const validationService = DomainValidationServiceFactory.createLocal()
 
     if ('acceptTerms' in data) {
-      // RegisterDTO
       return await validationService.validateUserRegistration(data as any)
     } else {
-      // LoginDTO
       return await validationService.validateUserLogin(data as LoginDTO)
     }
   }
 
   const handleLogin = async (data: LoginDTO) => {
     try {
-      // Validação local primeiro para feedback rápido
       const validation = await validateFormData(data)
       if (!validation.isValid) {
         const errorMessage = validation.errors.map(e => e.message).join(', ')
@@ -42,12 +40,10 @@ export const useAuth = () => {
         return
       }
 
-      // Login com cache e rate limiting
-      await loginWithCache(data)
+      await storeLogin(data)
     } catch (error) {
       console.error('Login error:', error)
 
-      // Mapeia o erro usando AuthErrorMapper para obter mensagem em português
       const domainError = AuthErrorMapper.toDomain(error)
       const errorMessage = domainError.getDisplayMessage()
 
@@ -58,12 +54,10 @@ export const useAuth = () => {
 
   const handleRegister = async (data: RegisterDTO) => {
     try {
-      // Validação completa com async checks
-      await registerWithValidation(data)
+      await storeRegister(data)
     } catch (error) {
       console.error('Register error:', error)
 
-      // Mapeia o erro usando AuthErrorMapper para obter mensagem em português
       const domainError = AuthErrorMapper.toDomain(error)
       const errorMessage = domainError.getDisplayMessage()
 

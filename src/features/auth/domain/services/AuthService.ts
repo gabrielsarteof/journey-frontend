@@ -23,11 +23,8 @@ export class AuthDomainService implements AuthService {
   constructor(
     private readonly authRepository: AuthRepository & AuthRepositorySpecifications
   ) {
-    // Factory para injetar as specifications assíncronas
-    this.validationService = DomainValidationServiceFactory.create(
-      (email: string) => this.authRepository.isEmailUnique(email),
-      (username: string) => this.authRepository.isUsernameUnique(username)
-    );
+    // Validação local apenas - backend valida unicidade
+    this.validationService = DomainValidationServiceFactory.createLocal();
   }
 
   async authenticate(credentials: LoginDTO): Promise<AuthResult> {

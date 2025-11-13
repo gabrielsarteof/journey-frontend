@@ -12,6 +12,7 @@ export const env = {
   AUTH_TOKEN_STORAGE_KEY: import.meta.env.VITE_AUTH_TOKEN_STORAGE_KEY || 'journey_access_token',
   AUTH_REFRESH_TOKEN_STORAGE_KEY: import.meta.env.VITE_AUTH_REFRESH_TOKEN_STORAGE_KEY || 'journey_refresh_token',
   AUTH_SESSION_STORAGE_KEY: import.meta.env.VITE_AUTH_SESSION_STORAGE_KEY || 'journey_auth_session',
+  AUTH_USE_SESSION_STORAGE: import.meta.env.VITE_AUTH_USE_SESSION_STORAGE !== 'false',
 
   // Feature Flags
   ENABLE_DEV_TOOLS: import.meta.env.VITE_ENABLE_DEV_TOOLS === 'true',

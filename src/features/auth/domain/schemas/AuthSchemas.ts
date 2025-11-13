@@ -3,41 +3,46 @@ import { z } from 'zod'
 export const RegisterSchema = z.object({
   email: z
     .string()
-    .email('Email inválido')
+    .email('Hmm, esse email não parece válido')
     .toLowerCase()
     .trim(),
   password: z
     .string()
-    .min(8, 'Senha deve ter pelo menos 8 caracteres')
-    .regex(/[A-Z]/, 'Senha deve conter pelo menos uma letra maiúscula')
-    .regex(/[a-z]/, 'Senha deve conter pelo menos uma letra minúscula')
-    .regex(/[0-9]/, 'Senha deve conter pelo menos um número')
-    .regex(/[^A-Za-z0-9]/, 'Senha deve conter pelo menos um caractere especial'),
+    .min(8, 'Sua senha precisa ter pelo menos 8 caracteres')
+    .regex(/[A-Z]/, 'Adicione pelo menos uma letra maiúscula')
+    .regex(/[a-z]/, 'Adicione pelo menos uma letra minúscula')
+    .regex(/[0-9]/, 'Adicione pelo menos um número')
+    .regex(/[^A-Za-z0-9]/, 'Adicione pelo menos um caractere especial'),
   confirmPassword: z
     .string()
-    .min(1, 'Confirmação de senha é obrigatória'),
+    .min(1, 'Por favor, confirme sua senha'),
   name: z
     .string()
-    .min(2, 'Nome deve ter pelo menos 2 caracteres')
-    .max(100, 'Nome deve ter no máximo 100 caracteres')
-    .trim(),
+    .min(2, 'Seu nome precisa ter pelo menos 2 caracteres')
+    .max(100, 'Ops! O nome está muito longo')
+    .trim()
+    .regex(/^[A-ZÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÑÒÓÔÕÖÙÚÛÜÝŸ]/, 'Comece seu nome com letra maiúscula')
+    .regex(/^[a-zA-ZÀ-ÿ\s]+$/, 'Use apenas letras e espaços no nome')
+    .refine((val) => val.split(' ').length >= 2, {
+      message: 'Precisamos do seu nome completo',
+    }),
   acceptTerms: z
     .boolean()
     .refine((val) => val === true, {
-      message: 'Você deve aceitar os termos e condições',
+      message: 'Aceite os termos para continuar',
     }),
 }).refine((data) => data.password === data.confirmPassword, {
-  message: 'Senhas não coincidem',
+  message: 'As senhas não coincidem',
   path: ['confirmPassword'],
 })
 
 export const LoginSchema = z.object({
   email: z
     .string()
-    .email('Email inválido')
+    .email('Hmm, esse email não parece válido')
     .toLowerCase()
     .trim(),
-  password: z.string().min(1, 'Senha é obrigatória'),
+  password: z.string().min(1, 'Por favor, digite sua senha'),
 })
 
 export const RefreshTokenSchema = z.object({

@@ -9,12 +9,23 @@ import { UserMapper } from '../mappers/UserMapper'
 
 // RESTful Service Interface - SRP: only auth operations
 export interface AuthRESTService {
-  createUser(data: CreateUserData): Promise<UserResource>
-  createSession(credentials: SessionCredentials): Promise<SessionResource>
+  createUser(data: CreateUserData): Promise<RegisterResponse>
+  createSession(credentials: SessionCredentials): Promise<RegisterResponse>
   getCurrentUser(): Promise<UserResource>
-  refreshSession(refreshToken: string): Promise<SessionResource>
+  refreshSession(refreshToken: string): Promise<RefreshResponse>
   destroySession(sessionId: string): Promise<void>
   validateUserField(field: 'email' | 'username', value: string): Promise<ValidationResult>
+}
+
+export interface RegisterResponse {
+  user: UserResource
+  accessToken: string
+  refreshToken: string
+}
+
+export interface RefreshResponse {
+  accessToken: string
+  refreshToken: string
 }
 
 // RESTful Resource DTOs
@@ -22,7 +33,7 @@ export interface CreateUserData {
   email: string
   name: string
   password: string
-  confirmPassword: string
+  acceptTerms: boolean
 }
 
 export interface SessionCredentials {
@@ -75,19 +86,18 @@ export class ApiAuthRepository extends BaseService implements AuthRepository, Au
     return this.executeWithMetrics(
       'register',
       async () => {
-        const userResource = await this.authRESTService.createUser({
+        const response = await this.authRESTService.createUser({
           email: data.email,
           name: data.name,
           password: data.password,
-          confirmPassword: data.confirmPassword
+          acceptTerms: data.acceptTerms
         });
 
-        const sessionResource = await this.authRESTService.createSession({
-          email: data.email,
-          password: data.password
-        });
-
-        return this.mapToAuthResult(userResource, sessionResource);
+        return {
+          user: UserMapper.toDomain(response.user),
+          accessToken: response.accessToken,
+          refreshToken: response.refreshToken
+        };
       }
     );
   }
@@ -96,14 +106,17 @@ export class ApiAuthRepository extends BaseService implements AuthRepository, Au
     return this.executeWithMetrics(
       'login',
       async () => {
-        const sessionResource = await this.authRESTService.createSession({
+        const response = await this.authRESTService.createSession({
           email: data.email,
           password: data.password
         });
 
-        const userResource = await this.authRESTService.getCurrentUser();
-
-        return this.mapToAuthResult(userResource, sessionResource);
+        // O backend já retorna user + tokens no login
+        return {
+          user: UserMapper.toDomain(response.user),
+          accessToken: response.accessToken,
+          refreshToken: response.refreshToken
+        };
       }
     );
   }
@@ -112,10 +125,18 @@ export class ApiAuthRepository extends BaseService implements AuthRepository, Au
     return this.executeWithMetrics(
       'refreshToken',
       async () => {
-        const sessionResource = await this.authRESTService.refreshSession(refreshToken);
+        const response = await this.authRESTService.refreshSession(refreshToken);
+
+        // O backend deve retornar user + tokens no refresh também
+        // Por enquanto mantemos apenas o sessionResource
+        // TODO: Verificar se backend retorna user no refresh
         const userResource = await this.authRESTService.getCurrentUser();
 
-        return this.mapToAuthResult(userResource, sessionResource);
+        return {
+          user: UserMapper.toDomain(userResource),
+          accessToken: response.accessToken,
+          refreshToken: response.refreshToken
+        };
       }
     );
   }

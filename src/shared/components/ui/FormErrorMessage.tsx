@@ -17,7 +17,7 @@ export function FormErrorMessage({ message, className = '' }: FormErrorMessagePr
   if (!message) return null
 
   return (
-    <p className={`text-sm text-journeyIncorrectRed ${className}`}>
+    <p className={`text-base text-error transition-colors ${className}`}>
       {message}
     </p>
   )

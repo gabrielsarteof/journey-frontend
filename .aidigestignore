@@ -1,0 +1,79 @@
+# Dependências e arquivos gerados
+node_modules/
+dist/
+.tanstack/
+package-lock.json
+
+# Arquivos de configuração IDE e Git
+.vscode/
+.git/
+.gitignore
+
+# Documentação
+docs/
+README.md
+QUICK_START.md
+LICENSE
+
+# Assets públicos
+public/
+
+# Arquivos de ambiente
+.env
+.env.example
+
+# Configurações
+eslint.config.js
+index.html
+tsconfig.app.json
+tsconfig.json
+tsconfig.node.json
+package.json
+vite.config.ts
+
+# Arquivos básicos do src
+src/main.tsx
+src/env.d.ts
+src/routeTree.gen.ts
+
+# Toda a estrutura app/
+src/app/
+
+# Todo o shared EXCETO componentes UI básicos
+src/shared/abstractions/
+src/shared/contexts/
+src/shared/di/
+src/shared/domain/
+src/shared/http/
+src/shared/infrastructure/
+src/shared/kernel/
+src/shared/lib/
+src/shared/middleware/
+src/shared/patterns/
+src/shared/performance/
+src/shared/types/
+src/shared/hooks/
+src/shared/config/
+src/shared/components/ErrorBoundary.tsx
+
+# Todas as rotas EXCETO dashboard
+src/routes/auth/
+src/routes/demo.tsx
+src/routes/middleware-demo.tsx
+src/routes/performance-demo.tsx
+src/routes/index.tsx
+src/routes/_authenticated.tsx
+src/routes/__root.tsx
+
+# Todas as features EXCETO dashboard
+src/features/auth/
+src/features/gamification/
+src/features/learning/
+src/features/profile/
+src/features/social/
+
+# Manter APENAS:
+# - src/globals.css (estilos globais)
+# - src/shared/components/ui/ (componentes UI básicos)
+# - src/routes/_authenticated.dashboard.tsx (rota da dashboard)
+# - src/features/dashboard/ (TODA a feature dashboard)

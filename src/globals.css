@@ -20,6 +20,66 @@
 }
 
 @layer utilities {
+  /* Speech bubble com seta para cima (apontando para cima) */
+  .speech-bubble {
+    position: relative;
+  }
+
+  /* Seta principal (preenchimento) usando técnica de border triangle */
+  .speech-bubble::before {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    margin-left: calc(var(--arrow-size) * -1);
+    border: var(--arrow-size) solid transparent;
+    border-bottom-color: var(--bg-color);
+    border-top: 0;
+  }
+
+  /* Seta de borda (para dropdowns com border-2) usando técnica de border triangle */
+  .speech-bubble.border-2::after {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    margin-left: calc(var(--arrow-size) * -1 - 2px);
+    border: calc(var(--arrow-size) + 2px) solid transparent;
+    border-bottom-color: var(--border-color);
+    border-top: 0;
+    z-index: -1;
+  }
+
+  /* Speech bubble com seta para baixo (apontando para baixo) */
+  .speech-bubble-bottom {
+    position: relative;
+  }
+
+  /* Seta principal (preenchimento) usando técnica de border triangle - apontando para baixo */
+  .speech-bubble-bottom::before {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: calc(var(--arrow-size) * -1);
+    border: var(--arrow-size) solid transparent;
+    border-top-color: var(--bg-color);
+    border-bottom: 0;
+  }
+
+  /* Seta de borda (para elementos com border-2) apontando para baixo */
+  .speech-bubble-bottom.border-2::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: calc(var(--arrow-size) * -1 - 2px);
+    border: calc(var(--arrow-size) + 2px) solid transparent;
+    border-top-color: var(--border-color);
+    border-bottom: 0;
+    z-index: -1;
+  }
+
   .scrollbar-journeyBlack {
     scrollbar-width: thin;
     scrollbar-color: var(--color-journeyBlack) transparent;
@@ -50,11 +110,116 @@
 
   /* Shadows de botões - seguindo o padrão do shadow-md */
   .shadow-button-primary {
-    box-shadow: var(--shadow-button-primary) !important;
+    box-shadow: var(--shadow-button-primary);
   }
 
   .shadow-button-secondary {
-    box-shadow: var(--shadow-button-secondary) !important;
+    box-shadow: var(--shadow-button-secondary);
+  }
+
+  /* Classes que precisam reagir ao tema */
+  .text-primary {
+    color: var(--color-text-primary);
+  }
+
+  .text-secondary {
+    color: var(--color-text-secondary);
+  }
+
+  .text-button-secondary {
+    color: var(--color-text-button-secondary);
+  }
+
+  /* Cor da marca/brand do projeto */
+  .text-brand {
+    color: var(--color-primary);
+  }
+
+  /* Classes de cores de gamificação */
+  .text-orange {
+    color: var(--color-orange);
+  }
+
+  .text-gold {
+    color: var(--color-gold);
+  }
+
+  .text-success {
+    color: var(--color-success);
+  }
+
+  .text-error {
+    color: var(--color-error);
+  }
+
+  .bg-gold {
+    background-color: var(--color-gold);
+  }
+
+  .border-border-secondary {
+    border-color: var(--color-border-secondary);
+  }
+
+  .bg-surface-hover {
+    background-color: var(--color-surface-hover);
+  }
+
+  /* Classes do botão primary */
+  .bg-primary-button {
+    background-color: var(--color-primary-button-bg);
+  }
+
+  .hover\:bg-primary-button-hover:hover {
+    background-color: var(--color-primary-button-hover);
+  }
+
+  .text-primary-button {
+    color: var(--color-primary-button-text);
+  }
+
+  .bg-input {
+    background-color: var(--color-input-bg);
+  }
+
+  .border-input {
+    border-color: var(--color-input-border);
+  }
+
+  .focus\:border-input-focus:focus {
+    border-color: var(--color-input-border-focus);
+  }
+
+  .text-input {
+    color: var(--color-input-text);
+  }
+
+  .placeholder-input::placeholder {
+    color: var(--color-input-placeholder);
+    font-size: 1rem;
+  }
+
+  .text-auth-heading {
+    color: var(--color-auth-heading);
+  }
+
+  .bg-divider {
+    background-color: var(--color-divider);
+  }
+
+  .text-divider {
+    color: var(--color-divider-text);
+  }
+
+  .text-link {
+    color: var(--color-link);
+  }
+
+  .text-error {
+    color: var(--color-error-text);
+  }
+
+  .placeholder-error::placeholder {
+    color: var(--color-error-text);
   }
 }
 
@@ -62,7 +227,7 @@
 @property --color-background {
   syntax: '<color>';
   inherits: true;
-  initial-value: #fafafa;
+  initial-value: #f2f0ef;
 }
 
 @property --color-surface {
@@ -77,15 +242,140 @@
   initial-value: #0f0f0f;
 }
 
+@property --color-text-button-secondary {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #0f0f0f;
+}
+
+@property --color-border-secondary {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #dddddd;
+}
+
+@property --color-surface-hover {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #f9f9f9;
+}
+
+@property --color-primary-button-bg {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #0f0f0f;
+}
+
+@property --color-primary-button-hover {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #333333;
+}
+
+@property --color-primary-button-text {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #ffffff;
+}
+
+@property --shadow-button-primary {
+  syntax: '*';
+  inherits: true;
+  initial-value: 0 5px 0 #000000;
+}
+
+@property --shadow-button-secondary {
+  syntax: '*';
+  inherits: true;
+  initial-value: 0 5px 0 #dddddd;
+}
+
+@property --color-input-bg {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #f3f4f6;
+}
+
+@property --color-input-border {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #d1d5db;
+}
+
+@property --color-input-border-focus {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #000000;
+}
+
+@property --color-input-text {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #4b5563;
+}
+
+@property --color-input-placeholder {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #6b7280;
+}
+
+@property --color-auth-heading {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #0f0f0f;
+}
+
+@property --color-divider {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #d1d5db;
+}
+
+@property --color-divider-text {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #6b7280;
+}
+
+@property --color-link {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #6b7280;
+}
+
+@property --color-error-text {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #dc2626;
+}
+
 /* Define as cores base no :root para serem referenciadas */
 :root {
-  --base-background: #fafafa;
+  --base-background: #ffffff;
   --base-surface: #ffffff;
   --base-surface-elevated: #f5f5f5;
   --base-surface-hover: #f9f9f9;
   --base-text-primary: #0f0f0f;
   --base-text-secondary: #52656d;
   --base-border-light: #dddddd;
+  --base-text-button-secondary: #0f0f0f;
+  --base-border-secondary: #e5e5e5;
+  --base-primary-button-bg: #0f0f0f;
+  --base-primary-button-hover: #333333;
+  --base-primary-button-text: #ffffff;
+  --base-shadow-button-primary: 0 5px 0 #000000;
+  --base-shadow-button-secondary: 0 5px 0 #c7c4bf;
+  --base-input-bg: #fefefe;
+  --base-input-border: #d1d5db;
+  --base-input-border-focus: #000000;
+  --base-input-text: #4b5563;
+  --base-input-placeholder: #6b7280;
+  --base-auth-heading: #0f0f0f;
+  --base-divider: #d1d5db;
+  --base-divider-text: #6b7280;
+  --base-link: #6b7280;
+  --base-error-text: #dc2626;
 }
 
 /* Theme variables referenciando as cores base */
@@ -96,7 +386,24 @@
   --color-surface-hover: var(--base-surface-hover);
   --color-text-primary: var(--base-text-primary);
   --color-text-secondary: var(--base-text-secondary);
+  --color-text-button-secondary: var(--base-text-button-secondary);
   --color-border-light: var(--base-border-light);
+  --color-border-secondary: var(--base-border-secondary);
+  --color-primary-button-bg: var(--base-primary-button-bg);
+  --color-primary-button-hover: var(--base-primary-button-hover);
+  --color-primary-button-text: var(--base-primary-button-text);
+  --shadow-button-primary: var(--base-shadow-button-primary);
+  --shadow-button-secondary: var(--base-shadow-button-secondary);
+  --color-input-bg: var(--base-input-bg);
+  --color-input-border: var(--base-input-border);
+  --color-input-border-focus: var(--base-input-border-focus);
+  --color-input-text: var(--base-input-text);
+  --color-input-placeholder: var(--base-input-placeholder);
+  --color-auth-heading: var(--base-auth-heading);
+  --color-divider: var(--base-divider);
+  --color-divider-text: var(--base-divider-text);
+  --color-link: var(--base-link);
+  --color-error-text: var(--base-error-text);
 }
 
 @theme {
@@ -110,10 +417,9 @@
   --color-border: #37464f;
   --color-border-muted: #e5e7eb;
   --color-border-strong: #2b383f;
-  --color-border-secondary: #dddddd;
 
-  /* Brand/Primárias - cor principal do projeto é #0f0f0f (preto) */
-  --color-primary: #0f0f0f;
+  /* Brand/Primárias - cor principal do projeto é #121212 */
+  --color-primary: #121212;
   --color-primary-hover: #333333;
   --color-primary-active: #1a1a1a;
   --color-secondary: #4bb0f6;
@@ -147,8 +453,6 @@
   --shadow-lg: 0 8px #333333;
 
   /* Sombras de botões */
-  --shadow-button-primary: 0 5px 0 #000000;
-  --shadow-button-secondary: 0 5px 0 #dddddd;
   --shadow-button-secondary-sm: 0 3px 0 #dddddd;
 
   /* Sombras de círculos/badges */
@@ -163,6 +467,18 @@
   --shadow-badge-pink: 0 5px 0 #cc6ba7;
   --shadow-badge-locked: 0 8px 0 #2b383f;
 
+  /* Cores dos módulos */
+  --color-module-backend: #8b5cf6;
+  --color-module-backend-shadow: #7c3aed;
+  --color-module-frontend: #06b6d4;
+  --color-module-frontend-shadow: #0891b2;
+  --color-module-devops: #10b981;
+  --color-module-devops-shadow: #059669;
+  --color-module-mobile: #ec4899;
+  --color-module-mobile-shadow: #db2777;
+  --color-module-data: #3b82f6;
+  --color-module-data-shadow: #2563eb;
+
   /* Tipografia */
   --font-family-sans: DIN, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-family-din: DIN, sans-serif;
@@ -170,13 +486,30 @@
 
 /* Dark mode: atualiza as variáveis base no :root */
 [data-theme="dark"] {
-  --base-background: #141f24;
-  --base-surface: #202f36;
-  --base-surface-elevated: #2b383f;
-  --base-surface-hover: #2b383f;
+  --base-background: #0F0E09;
+  --base-surface: #0F0E09;
+  --base-surface-elevated: #121212;
+  --base-surface-hover: #121212;
   --base-text-primary: #fafafa;
   --base-text-secondary: #adaeae;
-  --base-border-light: #4a5a64;
+  --base-text-button-secondary: #adaeae;
+  --base-border-light: #242027;
+  --base-border-secondary: #242027;
+  --base-primary-button-bg: #fafafa;
+  --base-primary-button-hover: #e0e0e0;
+  --base-primary-button-text: #0f0f0f;
+  --base-shadow-button-primary: 0 5px 0 #c7c4bf;
+  --base-shadow-button-secondary: 0 5px 0 #242027;
+  --base-input-bg: #121212;
+  --base-input-border: #242027;
+  --base-input-border-focus: #fafafa;
+  --base-input-text: #e5e5e5;
+  --base-input-placeholder: #9ca3af;
+  --base-auth-heading: #ffffff;
+  --base-divider: #333333;
+  --base-divider-text: #9ca3af;
+  --base-link: #9ca3af;
+  --base-error-text: #f87171;
 }
 
 [data-theme="dark"] {
@@ -192,9 +525,9 @@
     --color-border-strong: #4a5a64;
 
     /* Brand/Primárias */
-    --color-primary: #0f0f0f;
-    --color-primary-hover: #333333;
-    --color-primary-active: #1a1a1a;
+    --color-primary: #fafafa;
+    --color-primary-hover: #e0e0e0;
+    --color-primary-active: #d0d0d0;
     --color-secondary: #4bb0f6;
     --color-secondary-hover: #5dc0ff;
     --color-secondary-active: #4099d6;
@@ -223,8 +556,6 @@
     --shadow-md: 0 5px 0 #000000;
     --shadow-lg: 0 8px #0a0a0a;
 
-    --shadow-button-primary: 0 5px 0 #000000;
-    --shadow-button-secondary: 0 5px 0 #4a5a64;
     --shadow-button-secondary-sm: 0 3px 0 #4a5a64;
 
     --shadow-circle-sm: 0 5px 0 #1a2730;
@@ -236,7 +567,44 @@
     --shadow-badge-primary: 0 5px 0 #357ab8;
     --shadow-badge-pink: 0 5px 0 #a5548a;
     --shadow-badge-locked: 0 8px 0 #1a2730;
+
+    /* Cores dos módulos - mesmas em dark mode */
+    --color-module-backend: #8b5cf6;
+    --color-module-backend-shadow: #7c3aed;
+    --color-module-frontend: #06b6d4;
+    --color-module-frontend-shadow: #0891b2;
+    --color-module-devops: #10b981;
+    --color-module-devops-shadow: #059669;
+    --color-module-mobile: #ec4899;
+    --color-module-mobile-shadow: #db2777;
+    --color-module-data: #3b82f6;
+    --color-module-data-shadow: #2563eb;
   }
+}
+
+/* Classes de módulos - fora do @layer para garantir aplicação */
+.module-backend {
+  background-color: var(--color-module-backend);
+}
+
+.module-frontend {
+  background-color: var(--color-module-frontend);
+}
+
+.module-devops {
+  background-color: var(--color-module-devops);
+}
+
+.module-mobile {
+  background-color: var(--color-module-mobile);
+}
+
+.module-data {
+  background-color: var(--color-module-data);
+}
+
+.module-active {
+  transform: translateY(8px);
 }
 
 @keyframes bob {
@@ -297,12 +665,16 @@ body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
-  overflow-y: hidden;
-  width: 100dvw;
+  width: 100%;
+  height: 100%;
   background: var(--color-background);
-  overscroll-behavior: contain;
   font-family: DIN, system-ui, -apple-system, sans-serif;
   font-weight: 400;
+}
+
+#root {
+  min-height: 100vh;
+  width: 100%;
 }
 
 /* Screen reader only: oculta visualmente mas mantém acessível para leitores de tela */

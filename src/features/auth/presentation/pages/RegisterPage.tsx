@@ -1,5 +1,5 @@
-import { useState, useCallback, useMemo } from 'react'
-import { useNavigate } from '@tanstack/react-router'
+import { useState, useCallback, useMemo, useEffect } from 'react'
+import { useNavigate, useSearch } from '@tanstack/react-router'
 import { Input } from '../../../../shared/components/ui/Input'
 import { Button } from '../../../../shared/components/ui/Button'
 import { FormErrorMessage } from '../../../../shared/components/ui/FormErrorMessage'
@@ -63,14 +63,11 @@ const PasswordInput = ({ value, onChange, onBlur, hasError = false }: {
   )
 
   const inputType = showPassword ? 'text' : 'password'
-  const baseClasses = `
-    w-full bg-gray-100 border-2 rounded-2xl px-4 py-3 sm:px-5 sm:py-4 pr-12
-    text-sm sm:text-base
-    focus:outline-none transition-all duration-200
-    ${hasError
-      ? 'border-journeyIncorrectRed focus:border-journeyIncorrectRed text-journeyIncorrectRed placeholder-journeyIncorrectRed'
-      : 'border-gray-300 focus:border-black text-gray-600 placeholder-gray-500'}
-  `
+
+  // Classes com estado de erro adaptadas para tema claro e escuro
+  const baseClasses = hasError
+    ? 'w-full border-2 rounded-2xl px-4 py-3 sm:px-5 sm:py-4 pr-12 text-sm sm:text-base focus:outline-none transition-all duration-200 bg-red-50 dark:bg-red-900/20 border-journeyIncorrectRed focus:border-journeyIncorrectRed text-journeyIncorrectRed placeholder-red-400 dark:placeholder-red-500'
+    : 'w-full bg-input border-2 border-input rounded-2xl px-4 py-3 sm:px-5 sm:py-4 pr-12 text-sm sm:text-base focus:outline-none focus:border-input-focus transition-all duration-200 text-input placeholder-input'
 
   return (
     <div className="relative">
@@ -115,12 +112,12 @@ const PasswordInput = ({ value, onChange, onBlur, hasError = false }: {
 
       {showDropdown && (
         <div
-          className="absolute top-full left-0 right-0 z-50 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg p-3 sm:p-4 animate-in slide-in-from-top-2 duration-200"
+          className="absolute top-full left-0 right-0 z-50 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg p-2.5 sm:p-3 animate-in slide-in-from-top-2 duration-200"
           onMouseEnter={() => setShowDropdown(true)}
           onMouseLeave={() => setShowDropdown(false)}
         >
-          <div className="flex items-center justify-between mb-2">
-            <p className="text-xs sm:text-sm font-semibold text-gray-700">Sua senha deve conter:</p>
+          <div className="flex items-center justify-between mb-1.5">
+            <p className="text-xs font-semibold text-gray-700">Sua senha deve conter:</p>
             <div className="flex items-center space-x-1">
               <div className="text-xs text-gray-500">
                 {validCriteria.length}/{criteria.length}
@@ -133,23 +130,23 @@ const PasswordInput = ({ value, onChange, onBlur, hasError = false }: {
               </div>
             </div>
           </div>
-          <div className="space-y-1 sm:space-y-2">
+          <div className="space-y-0.5">
             {criteria.map((criterion) => {
               const isValid = criterion.test(value)
               return (
-                <div key={criterion.id} className="flex items-center space-x-2 py-1 px-2 -mx-2 rounded hover:bg-gray-50 transition-colors">
-                  <div className={`flex-shrink-0 w-4 h-4 rounded-full flex items-center justify-center transition-all duration-300 ${
+                <div key={criterion.id} className="flex items-center space-x-2 py-0.5 px-1.5 -mx-1.5 rounded hover:bg-gray-50 transition-colors">
+                  <div className={`flex-shrink-0 w-3.5 h-3.5 rounded-full flex items-center justify-center transition-all duration-300 ${
                     isValid ? 'bg-green-500 scale-110' : 'bg-gray-300'
                   }`}>
                     {isValid ? (
-                      <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                      <svg className="w-2 h-2 text-white" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
                     ) : (
                       <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
                     )}
                   </div>
-                  <span className={`text-xs sm:text-sm transition-all duration-300 ${
+                  <span className={`text-xs transition-all duration-300 ${
                     isValid ? 'text-green-600 font-medium' : 'text-gray-600'
                   }`}>
                     {criterion.label}
@@ -167,10 +164,16 @@ const PasswordInput = ({ value, onChange, onBlur, hasError = false }: {
 
 export function RegisterPage() {
   const navigate = useNavigate()
-  const { register, isLoading, error } = useAuth()
+  const search = useSearch({ from: '/auth/register' })
+  const { register, isLoading, error, clearError } = useAuth()
 
-  // Define o título da página como "Cadastro | Journey"
+  const redirectUrl = (search as any)?.redirect || '/dashboard'
+
   useDocumentTitle('Cadastro')
+
+  useEffect(() => {
+    clearError()
+  }, [])
 
   const [formData, setFormData] = useState<RegisterFormData>({
     name: '',
@@ -180,14 +183,30 @@ export function RegisterPage() {
     acceptTerms: false
   })
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({})
+  const [touchedFields, setTouchedFields] = useState<Record<string, boolean>>({})
 
-  // Validação debounced para campos do formulário
-  const validateField = useCallback((field: keyof RegisterFormData, value: string | boolean) => {
+  // Valida um campo específico apenas se foi tocado
+  const validateField = useCallback((field: keyof RegisterFormData, value: string | boolean, isTouched: boolean = true) => {
+    // Não valida se o campo não foi tocado ainda
+    if (!isTouched) {
+      return
+    }
+
     const partialData = { ...formData, [field]: value }
 
+    // Se o campo está vazio e foi tocado, remove o erro (deixa o usuário digitar)
+    if (!value || (typeof value === 'string' && value.trim() === '')) {
+      setValidationErrors(prev => ({ ...prev, [field]: '' }))
+      return
+    }
+
     // Validação específica para confirmPassword
-    if (field === 'confirmPassword' && partialData.password !== value) {
-      setValidationErrors(prev => ({ ...prev, confirmPassword: 'As senhas não coincidem' }))
+    if (field === 'confirmPassword') {
+      if (partialData.password && partialData.password !== value) {
+        setValidationErrors(prev => ({ ...prev, confirmPassword: 'As senhas não coincidem' }))
+      } else {
+        setValidationErrors(prev => ({ ...prev, confirmPassword: '' }))
+      }
       return
     }
 
@@ -201,13 +220,12 @@ export function RegisterPage() {
     }
 
     const validation = RegisterSchema.safeParse(registerData)
-    if (validation.success) {
-      setValidationErrors(prev => ({ ...prev, [field]: '' }))
+    const fieldError = validation.error?.issues.find(issue => issue.path[0] === field)
+
+    if (fieldError) {
+      setValidationErrors(prev => ({ ...prev, [field]: fieldError.message }))
     } else {
-      const fieldError = validation.error.issues.find(issue => issue.path[0] === field)
-      if (fieldError) {
-        setValidationErrors(prev => ({ ...prev, [field]: fieldError.message }))
-      }
+      setValidationErrors(prev => ({ ...prev, [field]: '' }))
     }
   }, [formData])
 
@@ -229,8 +247,15 @@ export function RegisterPage() {
       [field]: value
     }))
 
-    // Aplicação do Strategy Pattern com debounce otimizado
-    debouncedValidateField(field, value)
+    // Limpa erro global do backend quando usuário interage
+    if (error) {
+      clearError()
+    }
+
+    // Validação com debounce apenas se o campo já foi tocado
+    if (touchedFields[field]) {
+      debouncedValidateField(field, value, true)
+    }
   }
 
   const handleInputChange = (field: keyof RegisterFormData) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -238,12 +263,16 @@ export function RegisterPage() {
     handleChange(field)(value)
   }
 
+  const handleBlur = (field: keyof RegisterFormData) => () => {
+    // Marca o campo como tocado ao sair dele
+    setTouchedFields(prev => ({ ...prev, [field]: true }))
+
+    // Valida imediatamente ao sair do campo
+    validateField(field, formData[field], true)
+  }
+
   const validateForm = () => {
     const errors: Record<string, string> = {}
-
-    if (formData.password !== formData.confirmPassword) {
-      errors.confirmPassword = 'As senhas não coincidem'
-    }
 
     const registerData = {
       name: formData.name,
@@ -253,13 +282,23 @@ export function RegisterPage() {
       acceptTerms: formData.acceptTerms
     }
 
+    // Valida com o schema
     const validation = RegisterSchema.safeParse(registerData)
     if (!validation.success) {
       validation.error.issues.forEach(issue => {
-        if (issue.path[0]) {
-          errors[issue.path[0] as string] = issue.message
+        const fieldName = issue.path[0] as string
+        // Apenas adiciona o primeiro erro de cada campo
+        if (fieldName && !errors[fieldName]) {
+          errors[fieldName] = issue.message
         }
       })
+    }
+
+    // Validação específica de confirmPassword (após validações do schema)
+    if (!errors.confirmPassword && !errors.password) {
+      if (formData.confirmPassword && formData.password !== formData.confirmPassword) {
+        errors.confirmPassword = 'As senhas não coincidem'
+      }
     }
 
     return errors
@@ -268,6 +307,14 @@ export function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
+    setTouchedFields({
+      name: true,
+      email: true,
+      password: true,
+      confirmPassword: true,
+      acceptTerms: true
+    })
+
     const errors = validateForm()
     if (Object.keys(errors).length > 0) {
       setValidationErrors(errors)
@@ -284,13 +331,25 @@ export function RegisterPage() {
       }
 
       await register(registerData)
-      navigate({ to: '/' })
+
+      // Aguarda persistência do estado no localStorage via Zustand middleware
+      await new Promise(resolve => setTimeout(resolve, 100))
+
+      navigate({ to: redirectUrl as any })
     } catch (err) {
       console.error('Register error:', err)
     }
   }
 
   const handleButtonClick = async () => {
+    setTouchedFields({
+      name: true,
+      email: true,
+      password: true,
+      confirmPassword: true,
+      acceptTerms: true
+    })
+
     const errors = validateForm()
     if (Object.keys(errors).length > 0) {
       setValidationErrors(errors)
@@ -307,7 +366,11 @@ export function RegisterPage() {
       }
 
       await register(registerData)
-      navigate({ to: '/' })
+
+      // Aguarda persistência do estado no localStorage via Zustand middleware
+      await new Promise(resolve => setTimeout(resolve, 100))
+
+      navigate({ to: redirectUrl as any })
     } catch (err) {
       console.error('Register error:', err)
     }
@@ -318,131 +381,143 @@ export function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white p-4 relative">
-      {/* Close Button */}
+    <div className="w-full max-w-md mx-auto px-4 sm:px-6 md:px-8 py-8 sm:py-12">
+      {/* Close Button - Fixed position */}
       <button
         onClick={handleClose}
-        className="absolute top-4 left-4 sm:top-6 sm:left-6 w-8 h-8 flex items-center justify-center hover:opacity-70 transition-opacity cursor-pointer z-10"
+        className="fixed top-4 left-4 sm:top-6 sm:left-6 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center hover:opacity-70 transition-opacity cursor-pointer z-50"
         aria-label="Fechar"
       >
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="w-4 h-4 sm:w-5 sm:h-5">
           <path d="M2 2L14 14M14 2L2 14" stroke="#B1B1B1" strokeWidth="3" strokeLinecap="round"/>
         </svg>
       </button>
 
-      {/* Main Content Container */}
-      <div className="w-full max-w-sm mx-auto">
-        {/* Header */}
-        <header className="mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 text-center leading-tight">
-            Crie sua conta
-          </h1>
-        </header>
+      {/* Header */}
+      <header className="mb-6 sm:mb-8">
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-auth-heading text-center leading-tight transition-colors">
+          Crie sua conta
+        </h1>
+      </header>
 
-        {/* Register Form */}
-        <form onSubmit={handleSubmit} className="space-y-4 mb-6">
-          <Input
-            type="text"
-            placeholder="Nome completo"
-            value={formData.name}
-            onChange={handleInputChange('name')}
-            hasError={!!validationErrors.name}
-            required
+      {/* Register Form */}
+      <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4 mb-5">
+        <Input
+          type="text"
+          placeholder="Nome completo"
+          value={formData.name}
+          onChange={handleInputChange('name')}
+          onBlur={handleBlur('name')}
+          hasError={!!validationErrors.name}
+          required
+        />
+        {validationErrors.name && (
+          <FormErrorMessage message={validationErrors.name} />
+        )}
+
+        <Input
+          type="email"
+          placeholder="Email"
+          value={formData.email}
+          onChange={handleInputChange('email')}
+          onBlur={handleBlur('email')}
+          hasError={!!validationErrors.email}
+          required
+        />
+        {validationErrors.email && (
+          <FormErrorMessage message={validationErrors.email} />
+        )}
+
+        <PasswordInput
+          value={formData.password}
+          onChange={handleChange('password')}
+          onBlur={handleBlur('password')}
+          hasError={!!validationErrors.password}
+        />
+        {validationErrors.password && (
+          <FormErrorMessage message={validationErrors.password} />
+        )}
+
+        <Input
+          type="password"
+          placeholder="Confirmar senha"
+          value={formData.confirmPassword}
+          onChange={handleInputChange('confirmPassword')}
+          onBlur={handleBlur('confirmPassword')}
+          hasError={!!validationErrors.confirmPassword}
+          required
+        />
+        {validationErrors.confirmPassword && (
+          <FormErrorMessage message={validationErrors.confirmPassword} />
+        )}
+
+        <div className="flex items-start space-x-2">
+          <input
+            type="checkbox"
+            id="acceptTerms"
+            checked={formData.acceptTerms}
+            onChange={handleInputChange('acceptTerms')}
+            className="mt-0.5 h-4 w-4 text-blue-500 focus:ring-blue-500 border-gray-300 rounded flex-shrink-0"
           />
-
-          <Input
-            type="email"
-            placeholder="Email"
-            value={formData.email}
-            onChange={handleInputChange('email')}
-            hasError={!!validationErrors.email}
-            required
-          />
-
-          <PasswordInput
-            value={formData.password}
-            onChange={handleChange('password')}
-            onBlur={() => {}}
-            hasError={!!validationErrors.password}
-          />
-
-          <Input
-            type="password"
-            placeholder="Confirmar senha"
-            value={formData.confirmPassword}
-            onChange={handleInputChange('confirmPassword')}
-            hasError={!!validationErrors.confirmPassword}
-            required
-          />
-
-          <div className="flex items-start space-x-3">
-            <input
-              type="checkbox"
-              id="acceptTerms"
-              checked={formData.acceptTerms}
-              onChange={handleInputChange('acceptTerms')}
-              className="mt-0.5 h-4 w-4 text-blue-500 focus:ring-blue-500 border-gray-300 rounded flex-shrink-0"
-            />
-            <label htmlFor="acceptTerms" className="text-xs text-gray-600 leading-relaxed">
-              Eu aceito os{' '}
-              <a href="/terms" target="_blank" className="text-blue-500 hover:underline">
-                Termos de Uso
-              </a>{' '}
-              e a{' '}
-              <a href="/privacy" target="_blank" className="text-blue-500 hover:underline">
-                Política de Privacidade
-              </a>
-              <span className="text-red-500 ml-1">*</span>
-            </label>
-          </div>
-          {validationErrors.acceptTerms && (
-            <p className="text-xs text-red-600 ml-7">
-              {validationErrors.acceptTerms}
-            </p>
-          )}
-
-          {error && <FormErrorMessage message={error} />}
-
-          <Button
-            onClick={handleButtonClick}
-            variant="primary"
-            size="lg"
-            loading={isLoading}
-            disabled={!formData.acceptTerms}
-            type="submit"
-            className="!mt-6"
-            enableThrottle={true}
-            throttleDelay={2000}
-          >
-            {isLoading ? "CRIANDO CONTA..." : "CRIAR CONTA"}
-          </Button>
-        </form>
-
-        {/* Divider */}
-        <div className="flex items-center gap-3 my-6">
-          <div className="flex-1 h-px bg-gray-300"></div>
-          <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">OU</span>
-          <div className="flex-1 h-px bg-gray-300"></div>
+          <label htmlFor="acceptTerms" className="text-xs sm:text-sm text-gray-600 leading-snug">
+            Eu aceito os{' '}
+            <a href="/terms" target="_blank" className="text-link hover:underline transition-colors">
+              Termos de Uso
+            </a>{' '}
+            e a{' '}
+            <a href="/privacy" target="_blank" className="text-link hover:underline transition-colors">
+              Política de Privacidade
+            </a>
+            <span className="text-red-500 ml-1">*</span>
+          </label>
         </div>
+        {validationErrors.acceptTerms && (
+          <FormErrorMessage message={validationErrors.acceptTerms} />
+        )}
 
-        {/* Login Button */}
-        <div style={{ boxShadow: '0 5px 0 #d1d5db' }} className="rounded-2xl mb-6">
-          <Button
-            onClick={() => navigate({ to: '/auth/login' })}
-            variant="secondary"
-            size="lg"
-          >
-            FAZER LOGIN
-          </Button>
-        </div>
+        <Button
+          onClick={handleButtonClick}
+          variant="primary"
+          size="lg"
+          loading={isLoading}
+          disabled={!formData.acceptTerms}
+          type="submit"
+          className="!mt-4"
+          enableThrottle={true}
+          throttleDelay={2000}
+        >
+          {isLoading ? "CRIANDO CONTA..." : "CRIAR CONTA"}
+        </Button>
 
-        {/* Terms Footer */}
-        <footer className="text-center">
-          <p className="text-xs text-gray-500 leading-relaxed">
-            Ao se cadastrar no Journey, você concorda com nossos Termos e Política de Privacidade.
-          </p>
-        </footer>
+        {error && (
+          <FormErrorMessage message={error} />
+        )}
+      </form>
+
+      {/* Divider */}
+      <div className="flex items-center gap-3 sm:gap-4 my-4 sm:my-6">
+        <div className="flex-1 h-px bg-divider transition-colors"></div>
+        <span className="text-xs sm:text-sm font-medium text-divider uppercase tracking-wide transition-colors">OU</span>
+        <div className="flex-1 h-px bg-divider transition-colors"></div>
       </div>
+
+      {/* Login Button */}
+      <div style={{ boxShadow: '0 5px 0 #d1d5db' }} className="rounded-2xl mb-4 sm:mb-6">
+        <Button
+          onClick={() => navigate({ to: '/auth/login' })}
+          variant="secondary"
+          size="lg"
+        >
+          FAZER LOGIN
+        </Button>
+      </div>
+
+      {/* Terms Footer */}
+      <footer className="text-center px-2">
+        <p className="text-sm sm:text-base text-gray-500 leading-relaxed transition-colors">
+          Ao se cadastrar no Journey, você concorda com nossos Termos e Política de Privacidade.
+        </p>
+      </footer>
     </div>
   )
 }
