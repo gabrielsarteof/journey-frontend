@@ -1,5 +1,6 @@
 import { DomainError } from '@/shared/domain/validation/ValueObject'
 import { Category } from '../value-objects/Category'
+import { ModuleTheme } from '../value-objects/ModuleTheme'
 import { Challenge } from './Challenge'
 
 /**
@@ -21,6 +22,7 @@ export interface ModuleProps {
   id: string
   orderIndex: number
   category: Category
+  theme: ModuleTheme
   challenges: Challenge[]
   isLocked?: boolean
 }
@@ -29,6 +31,7 @@ export class Module {
   private readonly _id: string
   private readonly _orderIndex: number
   private readonly _category: Category
+  private readonly _theme: ModuleTheme
   private _challenges: Challenge[]
   private _isLocked: boolean
 
@@ -36,6 +39,7 @@ export class Module {
     this._id = props.id
     this._orderIndex = props.orderIndex
     this._category = props.category
+    this._theme = props.theme
     this._challenges = props.challenges
     this._isLocked = props.isLocked ?? false
 
@@ -65,6 +69,10 @@ export class Module {
       throw new DomainError('Categoria é obrigatória', 'module.category', 'REQUIRED')
     }
 
+    if (!this._theme) {
+      throw new DomainError('Tema é obrigatório', 'module.theme', 'REQUIRED')
+    }
+
     if (!Array.isArray(this._challenges)) {
       throw new DomainError('Desafios devem ser um array', 'module.challenges', 'INVALID_TYPE')
     }
@@ -83,6 +91,10 @@ export class Module {
 
   get category(): Category {
     return this._category
+  }
+
+  get theme(): ModuleTheme {
+    return this._theme
   }
 
   get challenges(): Challenge[] {
@@ -235,6 +247,7 @@ export class Module {
       id: this._id,
       orderIndex: this._orderIndex,
       category: this._category,
+      theme: this._theme,
       challenges: this._challenges.map(c => c.clone()),
       isLocked: this._isLocked
     })

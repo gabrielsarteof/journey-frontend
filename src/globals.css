@@ -478,6 +478,8 @@
   --color-module-mobile-shadow: #db2777;
   --color-module-data: #3b82f6;
   --color-module-data-shadow: #2563eb;
+  --color-module-fullstack: #f59e0b;
+  --color-module-fullstack-shadow: #d97706;
 
   /* Tipografia */
   --font-family-sans: DIN, system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -579,6 +581,8 @@
     --color-module-mobile-shadow: #db2777;
     --color-module-data: #3b82f6;
     --color-module-data-shadow: #2563eb;
+    --color-module-fullstack: #f59e0b;
+    --color-module-fullstack-shadow: #d97706;
   }
 }
 
@@ -601,6 +605,10 @@
 
 .module-data {
   background-color: var(--color-module-data);
+}
+
+.module-fullstack {
+  background-color: var(--color-module-fullstack);
 }
 
 .module-active {
