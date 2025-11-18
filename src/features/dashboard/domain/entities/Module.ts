@@ -1,13 +1,17 @@
 import { DomainError } from '@/shared/domain/validation/ValueObject'
 import { Category } from '../value-objects/Category'
+import { Unit } from './Unit'
+import { Level } from './Level'
 import { Challenge } from './Challenge'
 
 /**
  * Module Entity (Aggregate Root)
  *
- * Representa um módulo de aprendizado que contém múltiplos desafios.
+ * Representa um módulo de aprendizado que contém múltiplas unidades.
+ * Hierarquia: Module → Unit → Level → Challenge
+ *
  * Segue princípios DDD:
- * - Aggregate Root que gerencia Challenges
+ * - Aggregate Root que gerencia Units
  * - Encapsula regras de negócio de progressão
  * - Mantém invariantes sempre válidas
  *
@@ -21,7 +25,7 @@ export interface ModuleProps {
   id: string
   orderIndex: number
   category: Category
-  challenges: Challenge[]
+  units: Unit[]
   isLocked?: boolean
 }
 
@@ -29,14 +33,14 @@ export class Module {
   private readonly _id: string
   private readonly _orderIndex: number
   private readonly _category: Category
-  private _challenges: Challenge[]
+  private _units: Unit[]
   private _isLocked: boolean
 
   private constructor(props: ModuleProps) {
     this._id = props.id
     this._orderIndex = props.orderIndex
     this._category = props.category
-    this._challenges = props.challenges
+    this._units = props.units
     this._isLocked = props.isLocked ?? false
 
     this.validate()
@@ -65,8 +69,8 @@ export class Module {
       throw new DomainError('Categoria é obrigatória', 'module.category', 'REQUIRED')
     }
 
-    if (!Array.isArray(this._challenges)) {
-      throw new DomainError('Desafios devem ser um array', 'module.challenges', 'INVALID_TYPE')
+    if (!Array.isArray(this._units)) {
+      throw new DomainError('Units devem ser um array', 'module.units', 'INVALID_TYPE')
     }
   }
 
@@ -85,8 +89,8 @@ export class Module {
     return this._category
   }
 
-  get challenges(): Challenge[] {
-    return [...this._challenges] // Return copy to prevent external mutation
+  get units(): Unit[] {
+    return [...this._units] // Return copy to prevent external mutation
   }
 
   get isLocked(): boolean {
@@ -113,34 +117,35 @@ export class Module {
   }
 
   /**
-   * Domain Logic
+   * Domain Logic - Units
    */
 
-  getTotalChallenges(): number {
-    return this._challenges.length
+  getTotalUnits(): number {
+    return this._units.length
   }
 
-  getCompletedChallenges(): number {
-    return this._challenges.filter(challenge => challenge.isCompleted()).length
+  getCompletedUnits(): number {
+    return this._units.filter(unit => unit.isCompleted()).length
   }
 
-  getAvailableChallenges(): number {
-    return this._challenges.filter(challenge => challenge.isAvailable()).length
+  getAvailableUnits(): number {
+    return this._units.filter(unit => unit.isAvailable()).length
   }
 
   getProgressPercentage(): number {
-    const total = this.getTotalChallenges()
+    const total = this.getTotalUnits()
     if (total === 0) return 0
-    return Math.round((this.getCompletedChallenges() / total) * 100)
+    return Math.round((this.getCompletedUnits() / total) * 100)
   }
 
   isComplete(): boolean {
-    return this.getTotalChallenges() > 0 &&
-           this.getCompletedChallenges() === this.getTotalChallenges()
+    return this.getTotalUnits() > 0 &&
+           this.getCompletedUnits() === this.getTotalUnits()
   }
 
   hasStarted(): boolean {
-    return this.getCompletedChallenges() > 0
+    return this.getCompletedUnits() > 0 ||
+           this._units.some(unit => unit.isInProgress())
   }
 
   canBeUnlocked(userLevel: number): boolean {
@@ -153,19 +158,64 @@ export class Module {
   }
 
   /**
-   * Encontra um desafio pelo ID
+   * Encontra uma unit pelo ID
    */
-  getChallengeById(id: string): Challenge | undefined {
-    return this._challenges.find(challenge => challenge.id === id)
+  getUnitById(id: string): Unit | undefined {
+    return this._units.find(unit => unit.id === id)
   }
 
   /**
-   * Retorna o próximo desafio disponível
+   * Retorna a próxima unit disponível
    */
-  getNextAvailableChallenge(): Challenge | undefined {
-    return this._challenges.find(challenge =>
-      challenge.isAvailable() && !challenge.isCompleted()
+  getNextAvailableUnit(): Unit | undefined {
+    return this._units.find(unit =>
+      unit.isAvailable() && !unit.isCompleted()
     )
+  }
+
+  /**
+   * Retorna a unit atual (em progresso ou próxima disponível)
+   */
+  getCurrentUnit(): Unit | undefined {
+    // Busca unit em progresso
+    const inProgress = this._units.find(unit => unit.isInProgress())
+    if (inProgress) return inProgress
+
+    // Se não há nenhuma em progresso, retorna a próxima disponível
+    return this.getNextAvailableUnit()
+  }
+
+  /**
+   * Helper methods - Navegação através da hierarquia
+   * (Mantidos para compatibilidade e conveniência)
+   */
+
+  getAllLevels(): Level[] {
+    return this._units.flatMap(unit => unit.levels)
+  }
+
+  getAllChallenges(): Challenge[] {
+    return this._units.flatMap(unit =>
+      unit.levels.flatMap(level => level.challenges)
+    )
+  }
+
+  getLevelById(id: string): Level | undefined {
+    for (const unit of this._units) {
+      const level = unit.levels.find(l => l.id === id)
+      if (level) return level
+    }
+    return undefined
+  }
+
+  getChallengeById(id: string): Challenge | undefined {
+    for (const unit of this._units) {
+      for (const level of unit.levels) {
+        const challenge = level.challenges.find(c => c.id === id)
+        if (challenge) return challenge
+      }
+    }
+    return undefined
   }
 
   /**
@@ -186,18 +236,18 @@ export class Module {
     this._isLocked = true
   }
 
-  addChallenge(challenge: Challenge): void {
-    if (!challenge) {
-      throw new DomainError('Desafio é obrigatório', 'module.challenge', 'REQUIRED')
+  addUnit(unit: Unit): void {
+    if (!unit) {
+      throw new DomainError('Unit é obrigatória', 'module.unit', 'REQUIRED')
     }
 
     // Verifica se já existe
-    const exists = this._challenges.some(c => c.id === challenge.id)
+    const exists = this._units.some(u => u.id === unit.id)
     if (exists) {
-      throw new DomainError('Desafio já existe no módulo', 'module.challenge', 'DUPLICATE')
+      throw new DomainError('Unit já existe no módulo', 'module.unit', 'DUPLICATE')
     }
 
-    this._challenges.push(challenge)
+    this._units.push(unit)
   }
 
   /**
@@ -220,10 +270,10 @@ export class Module {
       icon: this.icon,
       category: this._category.getValue(),
       isLocked: this._isLocked,
-      totalChallenges: this.getTotalChallenges(),
-      completedChallenges: this.getCompletedChallenges(),
+      totalUnits: this.getTotalUnits(),
+      completedUnits: this.getCompletedUnits(),
       progressPercentage: this.getProgressPercentage(),
-      challenges: this._challenges.map(c => c.toDTO())
+      units: this._units.map(u => u.toDTO())
     }
   }
 
@@ -235,7 +285,7 @@ export class Module {
       id: this._id,
       orderIndex: this._orderIndex,
       category: this._category,
-      challenges: this._challenges.map(c => c.clone()),
+      units: this._units.map(u => u.clone()),
       isLocked: this._isLocked
     })
   }
@@ -253,8 +303,8 @@ export interface ModuleDTO {
   icon: string
   category: string
   isLocked: boolean
-  totalChallenges: number
-  completedChallenges: number
+  totalUnits: number
+  completedUnits: number
   progressPercentage: number
-  challenges: any[]
+  units: any[]
 }

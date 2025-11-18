@@ -1,42 +1,54 @@
 import { Module } from '../../domain/entities/Module'
 import { ModuleService } from '../services/ModuleService'
+import { UnitRepository } from './UnitRepository'
 import { ModuleMapper } from '../../domain/mappers/ModuleMapper'
-import { ChallengeMapper } from '../../domain/mappers/ChallengeMapper'
+
+/**
+ * ModuleRepository
+ *
+ * Repositório para operações com Modules
+ * Refatorado para buscar Units com a hierarquia completa: Module → Unit → Level → Challenge
+ */
 
 export interface ModuleRepositoryInterface {
   findAllWithProgress(): Promise<Module[]>
-  findBySlugWithChallenges(slug: string): Promise<Module | null>
+  findBySlug(slug: string): Promise<Module | null>
 }
 
 export class ModuleRepository implements ModuleRepositoryInterface {
-  constructor(private readonly service: ModuleService) {}
+  constructor(
+    private readonly moduleService: ModuleService,
+    private readonly unitRepository: UnitRepository
+  ) {}
 
+  /**
+   * Busca todos os módulos com progresso e suas units completas
+   */
   async findAllWithProgress(): Promise<Module[]> {
-    const moduleDTOs = await this.service.getModulesWithProgress()
+    const moduleDTOs = await this.moduleService.getModulesWithProgress()
 
-    const challengesMap = new Map()
+    const unitsByModule = new Map()
 
-    // Fetch challenges for each module in parallel
+    // Busca units (com levels) para cada módulo em paralelo
     await Promise.all(
       moduleDTOs.map(async (moduleDto) => {
-        const challengeDTOs = await this.service.getModuleChallenges(moduleDto.slug)
-        const challenges = ChallengeMapper.toDomainList(challengeDTOs)
-        challengesMap.set(moduleDto.id, challenges)
+        const units = await this.unitRepository.findByModuleId(moduleDto.id)
+        unitsByModule.set(moduleDto.id, units)
       })
     )
 
-    return ModuleMapper.toDomainList(moduleDTOs, challengesMap)
+    return ModuleMapper.toDomainList(moduleDTOs, unitsByModule)
   }
 
-  async findBySlugWithChallenges(slug: string): Promise<Module | null> {
+  /**
+   * Busca um módulo pelo slug com todas as units e levels
+   */
+  async findBySlug(slug: string): Promise<Module | null> {
     try {
-      const [moduleDto, challengeDTOs] = await Promise.all([
-        this.service.getModuleDetails(slug),
-        this.service.getModuleChallenges(slug),
-      ])
+      const moduleDto = await this.moduleService.getModuleDetails(slug)
+      const units = await this.unitRepository.findByModuleId(moduleDto.id)
 
-      const challenges = ChallengeMapper.toDomainList(challengeDTOs)
-      return ModuleMapper.toDomain(moduleDto, challenges)
+      return ModuleMapper.toDomain(moduleDto, units)
     } catch (error) {
       if (error instanceof Error && error.message.includes('not found')) {
         return null
