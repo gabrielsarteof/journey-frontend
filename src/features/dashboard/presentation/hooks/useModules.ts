@@ -1,7 +1,10 @@
 import { useState, useEffect, useMemo } from 'react'
 import { Module } from '../../domain/entities/Module'
 import { ModuleRepository } from '../../infrastructure/repositories/ModuleRepository'
+import { UnitRepository } from '../../infrastructure/repositories/UnitRepository'
 import { ModuleService } from '../../infrastructure/services/ModuleService'
+import { UnitService } from '../../infrastructure/services/UnitService'
+import { LevelService } from '../../infrastructure/services/LevelService'
 import { httpClient } from '@/shared/infrastructure/http/HttpClient'
 import { useAuthStore } from '@/features/auth/application/stores/authStore'
 
@@ -15,6 +18,8 @@ export interface UseModulesReturn {
 /**
  * Hook que gerencia o carregamento de módulos da aplicação.
  *
+ * Atualizado para usar a hierarquia completa: Module → Unit → Level → Challenge
+ *
  * Valida autenticação antes de executar fetch, evitando requisições
  * desnecessárias que resultariam em 401. O useEffect reage a mudanças
  * no estado de autenticação para refetch automático após login.
@@ -27,8 +32,16 @@ export function useModules(): UseModulesReturn {
   const { tokens, isAuthenticated, hasHydrated } = useAuthStore()
 
   const repository = useMemo(() => {
-    const service = new ModuleService(httpClient)
-    return new ModuleRepository(service)
+    // Inicializa services
+    const moduleService = new ModuleService(httpClient)
+    const unitService = new UnitService(httpClient)
+    const levelService = new LevelService(httpClient)
+
+    // Inicializa repositories com dependências
+    const unitRepository = new UnitRepository(unitService, levelService)
+    const moduleRepository = new ModuleRepository(moduleService, unitRepository)
+
+    return moduleRepository
   }, [])
 
   const fetchModules = async () => {
